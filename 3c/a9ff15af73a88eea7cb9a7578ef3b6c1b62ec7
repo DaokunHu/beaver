@@ -1,0 +1,19 @@
+eval/durian/Agent/prompts/Semantic.md
+  s_f376f9a8379361::t_d64e3daa488a20 16,23-24,84,104-110,113,124,129-130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "3ca9ff15af73a88eea7cb9a7578ef3b6c1b62ec7",
+  "prompts": {},
+  "sessions": {
+    "s_f376f9a8379361": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "59ab782a-a26b-4855-affd-912a89cb7704",
+        "model": "oaicopilot/qwen3.8-max"
+      },
+      "human_author": "Daokun <dookoen@U-XY7NF37Y-2050.local>"
+    }
+  }
+}
