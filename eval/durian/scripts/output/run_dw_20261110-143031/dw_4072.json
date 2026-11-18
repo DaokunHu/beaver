@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_4072",
+  "question": "For each department name and course level where the course is degree granting and the total units are greater than 6, and for each subject code in that degree-granting department, provide the department name, course level, number of unique courses, minimum total units offered, average total units for that department and course level, subject code, number of subject codes, minimum department budget code, and the full department name. Do not return any rounded answers.",
+  "setting": 1,
+  "answer": "The SQL has been submitted successfully.\n\n## Summary\n\n**Question shape**: A two-part analysis joined on department name:\n1. **Course statistics** (per department name + course level, degree-granting courses, total units > 6): unique course count, minimum total units, average total units — following precedent `dw_3163` exactly (SIS_COURSE_DESCRIPTION ⋈ SIS_DEPARTMENT ⋈ CIS_COURSE_CATALOG).\n2. **Subject-code statistics** (per subject code in degree-granting departments): subject code, number of subject codes, minimum department budget code, full department name — following precedent `dw_4812` exactly (SIS_DEPARTMENT ⋈ SIS_SUBJECT_CODE).\n\n**Key design decisions**:\n- Used `scd.IS_DEGREE_GRANTING = 'Y'` (course-level flag) for the first CTE and `d.IS_DEGREE_GRANTING = 'Y'` (department-level flag) for the second, matching the question's wording (\"the course is degree granting\" vs \"that degree-granting department\") and both precedents.\n- `AVG(ccc.TOTAL_UNITS)` returned raw (no ROUND), per \"Do not return any rounded answers\".\n- SELECT list contains exactly the 9 requested columns in the asked order.\n- Note: `mysql_query` was unavailable throughout (persistent authentication error), so the query was validated against the two verified precedent metric SQLs in the semantic network, which use identical tables, joins, filters, and aggregation patterns.",
+  "error": "",
+  "elapsed_seconds": 321.3,
+  "session_id": "run_dw_4072_1794295254",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_152054_run_dw_4072_1794295254_rendered.log"
+}

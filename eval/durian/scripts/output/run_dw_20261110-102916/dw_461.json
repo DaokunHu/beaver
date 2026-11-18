@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_461",
+  "question": "For each department that is degree granting, has a department budget code greater than 100000, is not the Mathematics department, and is not the Physics department, give the department name and the total clearing cost collector, but only include those departments where the total clearing cost collector is greater than the average clearing cost collector across all such departments. Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The SQL has been submitted successfully.\n\n**Summary of the final query:**\n\n1. **Inner CTE (`dept_totals`)**: Joins `SIS_DEPARTMENT` to `SIS_ADMIN_DEPARTMENT` on `DEPARTMENT_CODE = SIS_ADMIN_DEPARTMENT_CODE`, applies all four qualifying filters:\n   - `IS_DEGREE_GRANTING = 'Y'` (degree granting)\n   - `DEPT_BUDGET_CODE > 100000` (budget code threshold)\n   - `DEPARTMENT_NAME <> 'Mathematics'` (exclude Mathematics, per domain hint)\n   - `DEPARTMENT_CODE <> '8'` (exclude Physics, per domain hint)\n   \n   then groups by `DEPARTMENT_NAME` and computes `SUM(CLEARING_COST_COLLECTOR)` as the per-department total.\n\n2. **Outer query**: Returns only the department name and total clearing cost collector (exactly the two requested columns, in order) for departments whose total exceeds the average of the per-department totals across all qualifying departments — implemented via a scalar subquery over the same CTE, with no rounding applied.\n\nNote: direct database verification via `mysql_query` was not possible in this session (access denied errors on every attempt), so the query was validated against the semantic network evidence: the documented 1:1 join edge between the two tables, the concept decision guide routing budget/degree-granting filters to `SIS_DEPARTMENT` and the clearing cost measure to `SIS_ADMIN_DEPARTMENT`, and the precedent metric `dw_2224` which uses the identical join path and filter pattern.",
+  "error": "",
+  "elapsed_seconds": 98.0,
+  "session_id": "run_dw_461_1794283046",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_115726_run_dw_461_1794283046_rendered.log"
+}

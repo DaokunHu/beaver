@@ -1,0 +1,33 @@
+WITH subq1 AS (
+  SELECT t1.SUBJECT_ID,
+         t1.DEPARTMENT_NAME,
+         t0.TERM_DESCRIPTION,
+         SUM(t1.TOTAL_UNITS) OVER (PARTITION BY t1.ACADEMIC_YEAR ORDER BY t1.SUBJECT_ID) AS running_sum_total_units
+  FROM ACADEMIC_TERMS_ALL t0
+  JOIN COURSE_CATALOG_SUBJECT_OFFERED t1 ON t0.TERM_CODE = t1.TERM_CODE
+  WHERE t1.TERM_CODE = '2022FA'
+),
+subq2 AS (
+  SELECT t0.OFFER_DEPT_NAME,
+         t0.OFFER_SCHOOL_NAME,
+         COUNT(DISTINCT t0.SUBJECT_ID) AS num_unique_subjects,
+         MIN(t1.TOTAL_UNITS) AS min_total_units,
+         AVG(t1.NUM_ENROLLED_STUDENTS) AS avg_num_enrolled_students
+  FROM TIP_SUBJECT_OFFERED t0
+  JOIN TIP_DETAIL t2 ON t0.SUBJECT_ID = t2.SUBJECT_ID
+  JOIN SUBJECT_OFFERED_SUMMARY t1 ON t2.SUBJECT_ID = t1.SUBJECT_ID
+  WHERE t2.TIP_MATERIAL_STATUS_KEY = 'RQ'
+  GROUP BY t0.OFFER_DEPT_NAME, t0.OFFER_SCHOOL_NAME
+)
+SELECT subq1.SUBJECT_ID,
+       subq1.DEPARTMENT_NAME,
+       subq1.TERM_DESCRIPTION,
+       subq1.running_sum_total_units,
+       subq2.OFFER_DEPT_NAME,
+       subq2.OFFER_SCHOOL_NAME,
+       subq2.num_unique_subjects,
+       subq2.min_total_units,
+       subq2.avg_num_enrolled_students
+FROM subq1
+JOIN subq2 ON subq1.DEPARTMENT_NAME = subq2.OFFER_DEPT_NAME
+ORDER BY subq1.SUBJECT_ID

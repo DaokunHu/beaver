@@ -1,0 +1,44 @@
+WITH inner_cte AS (
+    SELECT t0.ACTIVITY_TITLE,
+           t0.TERM_CODE,
+           t0.MAX_ENROLLMENT,
+           t1.TERM_DESCRIPTION,
+           t1.TERM_START_DATE,
+           t2.SUBJECT_TITLE,
+           t2.NUM_ENROLLED_STUDENTS,
+           ROW_NUMBER() OVER (PARTITION BY t2.SUBJECT_TITLE ORDER BY t0.ACTIVITY_TITLE) AS window_column
+    FROM IAP_SUBJECT_DETAIL t0
+    JOIN ACADEMIC_TERMS t1 ON t0.TERM_CODE = t1.TERM_CODE
+    JOIN LIBRARY_SUBJECT_OFFERED t2 ON t1.TERM_CODE = t2.TERM_CODE
+    WHERE t0.ENROLLMENT_TYPE = 'Advance sign-up required'
+      AND t0.MAX_ENROLLMENT = 12
+),
+material_counts AS (
+    SELECT i.ACTIVITY_TITLE, i.TERM_CODE, COUNT(*) AS material_count
+    FROM IAP_SUBJECT_DETAIL i
+    JOIN TIP_DETAIL td ON i.TERM_CODE = td.TERM_CODE
+    WHERE i.ENROLLMENT_TYPE = 'Advance sign-up required'
+      AND i.MAX_ENROLLMENT = 12
+    GROUP BY i.ACTIVITY_TITLE, i.TERM_CODE
+),
+max_materials AS (
+    SELECT ACTIVITY_TITLE, MAX(material_count) AS max_material_count
+    FROM material_counts
+    GROUP BY ACTIVITY_TITLE
+)
+SELECT ic.ACTIVITY_TITLE,
+       ic.TERM_CODE,
+       ic.MAX_ENROLLMENT,
+       ic.TERM_DESCRIPTION,
+       ic.TERM_START_DATE,
+       ic.SUBJECT_TITLE,
+       ic.NUM_ENROLLED_STUDENTS,
+       l.OFFER_DEPT_NAME,
+       l.RESPONSIBLE_FACULTY_NAME,
+       ic.window_column,
+       mm.max_material_count
+FROM inner_cte ic
+JOIN LIBRARY_SUBJECT_OFFERED l ON ic.TERM_CODE = l.TERM_CODE AND ic.SUBJECT_TITLE = l.SUBJECT_TITLE
+JOIN max_materials mm ON ic.ACTIVITY_TITLE = mm.ACTIVITY_TITLE
+WHERE ic.NUM_ENROLLED_STUDENTS >= 10
+ORDER BY ic.SUBJECT_TITLE, ic.ACTIVITY_TITLE

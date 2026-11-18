@@ -1,0 +1,33 @@
+WITH dept_units AS (
+    SELECT sd.DEPARTMENT_CODE,
+           sd.DEPARTMENT_NAME,
+           MAX(ccc.TOTAL_UNITS) AS max_total_units,
+           sd.SCHOOL_NAME
+    FROM SIS_DEPARTMENT sd
+    JOIN CIS_COURSE_CATALOG ccc ON sd.DEPARTMENT_CODE = ccc.DEPARTMENT_CODE
+    GROUP BY sd.DEPARTMENT_CODE, sd.DEPARTMENT_NAME, sd.SCHOOL_NAME
+    HAVING MAX(ccc.TOTAL_UNITS) > 6
+),
+student_courses AS (
+    SELECT t2.FULL_NAME,
+           t2.EMAIL_ADDRESS,
+           t0.COURSE_DESCRIPTION,
+           t0.COURSE_LEVEL,
+           t2.STUDENT_YEAR,
+           t1.DEPARTMENT_CODE,
+           COUNT(*) OVER (PARTITION BY t0.COURSE_LEVEL, t2.STUDENT_YEAR) AS year_cnt
+    FROM SIS_COURSE_DESCRIPTION t0
+    JOIN SIS_DEPARTMENT t1 ON t0.DEPARTMENT = t1.DEPARTMENT_CODE
+    JOIN MIT_STUDENT_DIRECTORY t2 ON t1.DEPARTMENT_CODE = t2.DEPARTMENT
+    WHERE t1.DEPARTMENT_NAME = 'Electrical Eng & Computer Sci'
+)
+SELECT du.DEPARTMENT_NAME,
+       du.max_total_units,
+       du.SCHOOL_NAME,
+       sc.FULL_NAME,
+       sc.EMAIL_ADDRESS,
+       sc.COURSE_DESCRIPTION,
+       sc.COURSE_LEVEL,
+       FIRST_VALUE(sc.STUDENT_YEAR) OVER (PARTITION BY sc.COURSE_LEVEL ORDER BY sc.year_cnt DESC, sc.STUDENT_YEAR) AS most_common_student_year
+FROM dept_units du
+JOIN student_courses sc ON du.DEPARTMENT_CODE = sc.DEPARTMENT_CODE

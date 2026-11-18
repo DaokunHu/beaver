@@ -1,0 +1,1012 @@
+{
+  "metrics": {
+    "total_evaluated": 100,
+    "exact_matches": 61,
+    "accuracy_including_empty": 61.0,
+    "nonempty_gold_total": 100,
+    "nonempty_gold_score": 61,
+    "accuracy_excluding_empty": 61.0
+  },
+  "details": [
+    {
+      "file": "dw_104.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1133.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1191.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1207.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_140.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1414.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1498.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1566.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1570.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1582.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1616.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1639.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1679.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1737.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1795.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1848.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_19.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1948.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_1970.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2030.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2070.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2097.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2132.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2227.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2293.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_232.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2394.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2443.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2633.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2669.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2694.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2715.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_287.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2878.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_2933.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3148.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3183.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_323.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3298.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3310.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3545.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3585.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3643.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3778.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3847.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3862.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3868.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_3901.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4004.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4061.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4072.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4101.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4128.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4155.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_427.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4339.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4349.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4351.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4374.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4407.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4413.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4513.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4522.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4553.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4570.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_458.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4588.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_461.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4610.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4691.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4725.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4771.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4876.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_4961.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5008.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5136.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5166.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5181.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5330.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5361.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5415.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5638.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5668.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5711.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_5769.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_588.sql",
+      "match": false,
+      "score": 0,
+      "message": "Column count mismatch: pred 5 vs gold 6",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_625.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_649.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_663.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_714.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_718.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_752.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_777.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_779.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_817.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_872.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_942.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_960.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_965.sql",
+      "match": true,
+      "score": 1,
+      "message": "Match (values match, ignoring column names)",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    },
+    {
+      "file": "dw_995.sql",
+      "match": false,
+      "score": 0,
+      "message": "Values mismatch",
+      "gold_empty": false,
+      "pred_empty": false,
+      "gold_error": null,
+      "pred_error": null
+    }
+  ]
+}

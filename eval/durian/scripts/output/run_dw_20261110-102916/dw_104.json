@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_104",
+  "question": "For subjects offered in the academic year 2022 that are printed in the bulletin and belong to the Mathematics department (Course 18), show the subject title, department name, total units, and the difference between the total units of each subject and the average total units for Mathematics subjects in 2022. Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The SQL has been submitted successfully and validated against the expected case (dw_104).\n\n**Final answer summary:**\n- **Tables**: `COURSE_CATALOG_SUBJECT_OFFERED` (catalog facts) joined to `SIS_DEPARTMENT` on `DEPARTMENT_CODE`\n- **Filters**: `ACADEMIC_YEAR = 2022`, `IS_PRINTED_IN_BULLETIN = 'Y'`, `DEPARTMENT_CODE = '18'`, `DEPARTMENT_NAME = 'Mathematics'`\n- **Computation**: A CTE selects the filtered subject rows; a second CTE computes the scalar `AVG(TOTAL_UNITS)` over that same population; the final SELECT cross-joins them to output each subject's title, department name, total units, and the unrounded difference `TOTAL_UNITS - avg_total_units` — exactly the 4 columns requested, in order.",
+  "error": "",
+  "elapsed_seconds": 71.4,
+  "session_id": "run_dw_104_1794283616",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_120656_run_dw_104_1794283616_rendered.log"
+}

@@ -1,0 +1,43 @@
+WITH DeptMaxUnits AS (
+    SELECT s.DEPARTMENT_NAME,
+           MAX(c.TOTAL_UNITS) AS max_total_units,
+           s.SCHOOL_NAME
+    FROM SIS_SUBJECT_CODE s
+    JOIN CIS_COURSE_CATALOG c ON s.DEPARTMENT_CODE = c.DEPARTMENT_CODE
+    GROUP BY s.DEPARTMENT_NAME, s.SCHOOL_NAME
+    HAVING MAX(c.TOTAL_UNITS) > 6
+),
+EECSStudents AS (
+    SELECT t2.FULL_NAME,
+           t2.EMAIL_ADDRESS,
+           t1.DEPARTMENT_NAME,
+           t0.COURSE_DESCRIPTION,
+           t0.COURSE_LEVEL,
+           t2.STUDENT_YEAR
+    FROM SIS_COURSE_DESCRIPTION t0
+    JOIN SIS_DEPARTMENT t1 ON t0.DEPARTMENT = t1.DEPARTMENT_CODE
+    JOIN MIT_STUDENT_DIRECTORY t2 ON t1.DEPARTMENT_CODE = t2.DEPARTMENT
+    WHERE t1.DEPARTMENT_NAME = 'Electrical Eng & Computer Sci'
+),
+MostCommonYear AS (
+    SELECT COURSE_LEVEL, STUDENT_YEAR AS most_common_student_year
+    FROM (
+        SELECT COURSE_LEVEL,
+               STUDENT_YEAR,
+               ROW_NUMBER() OVER (PARTITION BY COURSE_LEVEL ORDER BY COUNT(*) DESC, STUDENT_YEAR) AS rn
+        FROM EECSStudents
+        GROUP BY COURSE_LEVEL, STUDENT_YEAR
+    ) ranked
+    WHERE rn = 1
+)
+SELECT dmu.DEPARTMENT_NAME,
+       dmu.max_total_units,
+       dmu.SCHOOL_NAME,
+       es.FULL_NAME,
+       es.EMAIL_ADDRESS,
+       es.COURSE_DESCRIPTION,
+       es.COURSE_LEVEL,
+       mcy.most_common_student_year
+FROM DeptMaxUnits dmu
+JOIN EECSStudents es ON dmu.DEPARTMENT_NAME = es.DEPARTMENT_NAME
+JOIN MostCommonYear mcy ON es.COURSE_LEVEL = mcy.COURSE_LEVEL

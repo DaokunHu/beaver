@@ -1,0 +1,22 @@
+{
+  "reasoning_effort": "medium",
+  "enable_thinking": true,
+  "clear_thinking": true, 
+  "temperature": 0,
+  "max_steps": 1000,
+  "semantic_network": {
+    "semantic_dir": "Agent/semantic",
+    "entity_required_fields": {
+      "table": ["id", "name", "desc"],
+      "metric": ["id", "name", "sql", "desc", "category"]
+    },
+    "neighbors_max_depth": 2,
+    "vector_db_dir": "Agent/zvec_db",
+    "embedding_dim": 1024,
+    "vector_topk": 10
+  },
+  "mysql": {
+    "max_rows_returned": 500000,
+    "connect_timeout_seconds": 60
+  }
+}

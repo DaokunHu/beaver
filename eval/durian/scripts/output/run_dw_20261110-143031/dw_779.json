@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_779",
+  "question": "For each academic year, give the academic year, the academic year description, the average of the total units, the standard deviation (using STDDEV only and never STDDEV_POP) of the total units, and the variance of the total units for subjects offered in regular terms by the Mathematics department, where the variance is calculated only for regular terms with a term status of 'Previous'. Do not return any rounded answers.",
+  "setting": 1,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the solution:**\n\n- **Tables**: `ACADEMIC_TERMS` (provides `ACADEMIC_YEAR`, `ACADEMIC_YEAR_DESC`, `IS_REGULAR_TERM`, `TERM_STATUS`), `ACADEMIC_TERMS_ALL` (gold table, joined 1:1 on `TERM_CODE` — no fan-out risk), and `COURSE_CATALOG_SUBJECT_OFFERED` (provides `TOTAL_UNITS` and `DEPARTMENT_NAME`), joined via `TERM_CODE = EFFECTIVE_TERM_CODE` per the hint and the dw_359/dw_3417 precedents.\n- **Filters**: `IS_REGULAR_TERM = 'Y'` (regular terms) and `DEPARTMENT_NAME = 'Mathematics'`.\n- **Aggregation**: grouped by academic year + description; `AVG` and bare `STDDEV` computed over all regular-term Mathematics offerings, while the variance is restricted to `TERM_STATUS = 'Previous'` rows using a conditional `VARIANCE(CASE WHEN ... END)` — matching the question's \"variance calculated only for regular terms with a term status of 'Previous'\" wording.\n- **No rounding** applied, per the requirement.\n\nNote: direct data verification via `mysql_query` was impossible in this session (persistent `Access denied for user 'root'@'localhost'` authentication error on every attempt), so the query was constructed strictly from the semantic-network column definitions, documented join keys, and the closely-matching precedent metrics (dw_359, dw_3417, dw_41).",
+  "error": "",
+  "elapsed_seconds": 247.4,
+  "session_id": "run_dw_779_1794309307",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_191507_run_dw_779_1794309307_rendered.log"
+}

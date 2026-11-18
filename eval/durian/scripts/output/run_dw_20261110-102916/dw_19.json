@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_19",
+  "question": "For each department, list the department name, the average, range, and variance of the total units for subjects offered in the 2022 academic year that are degree granting and have at least one subject with more than 9 total units, but only include departments that are not 'Mathematics' (Course 18). Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the query:**\n\n- **Tables & joins** (per documented join keys): `SIS_SUBJECT_CODE` → `SIS_COURSE_DESCRIPTION` (on `COURSE_NUMBER = COURSE`) → `COURSE_CATALOG_SUBJECT_OFFERED` (on `COURSE = SUBJECT_CODE`).\n- **Filters**: catalog offerings in academic year 2022 (`ACADEMIC_YEAR = 2022`), degree-granting courses (`IS_DEGREE_GRANTING = 'Y'`), excluding Mathematics/Course 18 (`DEPARTMENT_NAME <> 'Mathematics' AND DEPARTMENT <> '18'`).\n- **Group-level condition**: \"at least one subject with more than 9 total units\" is expressed as `HAVING MAX(TOTAL_UNITS) > 9`.\n- **Outputs** (exactly as asked, unrounded): department name, `AVG(TOTAL_UNITS)`, range (`MAX − MIN`), and `VARIANCE(TOTAL_UNITS)`, ordered by range descending.\n\nNote: direct database verification via `mysql_query` was not possible in this session (the connection returned \"Access denied for user 'root'@'localhost'\"), so the query was validated against the semantic network's column definitions, documented join edges, the total-units/year decision guides, and same-shape metric precedents (dw_2151, dw_2272, dw_1335), all of which confirm the table/column choices and query structure.",
+  "error": "",
+  "elapsed_seconds": 141.6,
+  "session_id": "run_dw_19_1794279078",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_105118_run_dw_19_1794279078_rendered.log"
+}

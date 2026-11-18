@@ -1,0 +1,51 @@
+WITH inner_cte AS (
+    SELECT t0.COURSE_NUMBER,
+           t0.SUBJECT_TITLE,
+           t0.NUM_ENROLLED_STUDENTS,
+           t1.TERM_DESCRIPTION,
+           t1.ACADEMIC_YEAR,
+           ROW_NUMBER() OVER (PARTITION BY t1.ACADEMIC_YEAR ORDER BY t0.COURSE_NUMBER) AS window_column
+    FROM LIBRARY_SUBJECT_OFFERED t0
+    JOIN ACADEMIC_TERMS t1 ON t0.TERM_CODE = t1.TERM_CODE
+    WHERE t0.OFFER_DEPT_NAME = 'Mathematics'
+      AND t0.NUM_ENROLLED_STUDENTS >= 5
+),
+AvgEnrolled AS (
+    SELECT t1.ACADEMIC_YEAR,
+           AVG(t0.NUM_ENROLLED_STUDENTS) AS avg_enrolled
+    FROM LIBRARY_SUBJECT_OFFERED t0
+    JOIN ACADEMIC_TERMS t1 ON t0.TERM_CODE = t1.TERM_CODE
+    WHERE t0.OFFER_DEPT_NAME = 'Mathematics'
+      AND t0.NUM_ENROLLED_STUDENTS >= 5
+    GROUP BY t1.ACADEMIC_YEAR
+),
+SubjectCodeStats AS (
+    SELECT s.SUBJECT_CODE,
+           s.SUBJECT_CODE_DESC,
+           d.DEPARTMENT_NAME,
+           AVG(ASCII(s.COURSE_NUMBER)) AS avg_ascii_course_number,
+           VARIANCE(ASCII(s.COURSE_NUMBER)) AS var_ascii_course_number
+    FROM SIS_DEPARTMENT d
+    JOIN SIS_SUBJECT_CODE s ON d.DEPARTMENT_CODE = s.DEPARTMENT_CODE
+    WHERE d.IS_DEGREE_GRANTING = 'Y'
+    GROUP BY s.SUBJECT_CODE, s.SUBJECT_CODE_DESC, d.DEPARTMENT_NAME
+)
+SELECT i.COURSE_NUMBER,
+       i.SUBJECT_TITLE,
+       i.NUM_ENROLLED_STUDENTS,
+       i.TERM_DESCRIPTION,
+       i.ACADEMIC_YEAR,
+       i.window_column,
+       scs.DEPARTMENT_NAME,
+       scs.SUBJECT_CODE,
+       scs.SUBJECT_CODE_DESC,
+       scs.avg_ascii_course_number,
+       scs.var_ascii_course_number
+FROM inner_cte i
+JOIN AvgEnrolled a ON i.ACADEMIC_YEAR = a.ACADEMIC_YEAR
+JOIN SIS_SUBJECT_CODE ssc ON ssc.COURSE_NUMBER = i.COURSE_NUMBER
+     AND ssc.DEPARTMENT_NAME = 'Mathematics'
+JOIN SubjectCodeStats scs ON scs.SUBJECT_CODE = ssc.SUBJECT_CODE
+     AND scs.DEPARTMENT_NAME = ssc.DEPARTMENT_NAME
+WHERE i.NUM_ENROLLED_STUDENTS > a.avg_enrolled
+ORDER BY i.COURSE_NUMBER;

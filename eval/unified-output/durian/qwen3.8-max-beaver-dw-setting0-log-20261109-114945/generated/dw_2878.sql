@@ -1,0 +1,17 @@
+SELECT
+    t.OFFER_DEPT_NAME,
+    MAX(t.avg_enrollment) AS max_avg_enrollment
+FROM (
+    SELECT
+        s.OFFER_DEPT_NAME,
+        s.TERM_CODE,
+        AVG(s.NUM_ENROLLED_STUDENTS) AS avg_enrollment
+    FROM SUBJECT_OFFERED_SUMMARY s
+    JOIN TIP_DETAIL d
+        ON s.SUBJECT_ID = d.SUBJECT_ID
+       AND s.TERM_CODE = d.TERM_CODE
+    WHERE s.TOTAL_UNITS > 0
+    GROUP BY s.OFFER_DEPT_NAME, s.TERM_CODE
+) t
+GROUP BY t.OFFER_DEPT_NAME
+ORDER BY t.OFFER_DEPT_NAME;

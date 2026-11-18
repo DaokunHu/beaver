@@ -1,0 +1,15 @@
+WITH inner_cte AS (
+    SELECT l.OFFER_DEPT_NAME,
+           s.TERM_CODE,
+           AVG(s.NUM_ENROLLED_STUDENTS) AS avg_enrollment_per_term
+    FROM LIBRARY_SUBJECT_OFFERED l
+    INNER JOIN TIP_DETAIL t ON l.SUBJECT_ID = t.SUBJECT_ID
+    INNER JOIN SUBJECT_OFFERED_SUMMARY s ON s.SUBJECT_ID = t.SUBJECT_ID
+    WHERE t.RECORD_COUNT >= 1
+      AND s.TOTAL_UNITS > 0
+    GROUP BY l.OFFER_DEPT_NAME, s.TERM_CODE
+)
+SELECT OFFER_DEPT_NAME,
+       MAX(avg_enrollment_per_term) AS max_avg_enrollment
+FROM inner_cte
+GROUP BY OFFER_DEPT_NAME

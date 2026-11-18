@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_779",
+  "question": "For each academic year, give the academic year, the academic year description, the average of the total units, the standard deviation (using STDDEV only and never STDDEV_POP) of the total units, and the variance of the total units for subjects offered in regular terms by the Mathematics department, where the variance is calculated only for regular terms with a term status of 'Previous'. Do not return any rounded answers.",
+  "setting": 0,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the solution:**\n\n- **Tables**: `ACADEMIC_TERMS` (term dimension — the only term table carrying both `IS_REGULAR_TERM` and `TERM_STATUS`) joined to `COURSE_CATALOG_SUBJECT_OFFERED` on `TERM_CODE = EFFECTIVE_TERM_CODE`, following the exact join pattern of precedent metric dw_3417/dw_359 for \"subjects offered in regular terms\" unit statistics.\n- **Filters**: `IS_REGULAR_TERM = 'Y'` (regular terms) and `DEPARTMENT_NAME = 'Mathematics'`.\n- **Measures** (per academic year, no rounding):\n  - `AVG(TOTAL_UNITS)` — average total units over all regular-term Mathematics offerings,\n  - `STDDEV(TOTAL_UNITS)` — bare STDDEV as required (never STDDEV_POP),\n  - `VARIANCE(CASE WHEN TERM_STATUS = 'Previous' THEN TOTAL_UNITS END)` — variance computed only over rows in terms whose status text is 'Previous' (matching the `TERM_STATUS` literal used in precedents dw_4658/dw_4325), while keeping all year groups intact.\n- **SELECT list**: exactly the 5 requested columns in the asked order — academic year, academic year description, average, standard deviation, variance.\n\nNote: live execution verification was not possible in this session (the MySQL connection repeatedly returned \"Access denied\"), so the query was validated against the semantic network's column definitions and same-shape metric precedents.",
+  "error": "",
+  "elapsed_seconds": 343.0,
+  "session_id": "run_dw_779_1794219537",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261109_181857_run_dw_779_1794219537_rendered.log"
+}

@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Environment variables
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.codefuse
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+
+# Generated: vector store, agent logs
+Agent/zvec_db/
+Agent/logs/
+
+# Generated: pipeline run/update outputs
+scripts/output/
+output/
+
+# Generated: intermediate build data (min_cover.json etc.)
+data/
+
+# Generated: evaluation submissions
+Eval/

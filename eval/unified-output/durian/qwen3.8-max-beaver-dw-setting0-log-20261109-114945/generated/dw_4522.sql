@@ -1,0 +1,69 @@
+WITH TopSubjects AS (
+  SELECT s.SUBJECT_TITLE,
+         s.DEPARTMENT_NAME,
+         COUNT(t.TIP_MATERIAL_KEY) AS material_count
+  FROM TIP_DETAIL t
+  JOIN ACADEMIC_TERMS a ON t.TERM_CODE = a.TERM_CODE
+  JOIN SUBJECT_SUMMARY s ON a.TERM_CODE = s.TERM_CODE AND t.SUBJECT_ID = s.SUBJECT_ID
+  WHERE a.IS_REGULAR_TERM = 'Y'
+  GROUP BY s.SUBJECT_TITLE, s.DEPARTMENT_NAME
+  ORDER BY material_count DESC
+  LIMIT 10
+),
+inner_cte AS (
+  SELECT lso.SUBJECT_TITLE,
+         lso.OFFER_DEPT_NAME,
+         lso.RESPONSIBLE_FACULTY_NAME,
+         td.TIP_MATERIAL_STATUS_KEY,
+         sos.TOTAL_UNITS,
+         MIN(sos.TOTAL_UNITS) OVER (
+           ORDER BY sos.COURSE_NUMBER
+           ROWS BETWEEN 3 PRECEDING AND 1 FOLLOWING
+         ) AS window_column
+  FROM LIBRARY_SUBJECT_OFFERED lso
+  JOIN TIP_DETAIL td ON lso.SUBJECT_ID = td.SUBJECT_ID
+  JOIN SUBJECT_OFFERED_SUMMARY sos ON td.SUBJECT_ID = sos.SUBJECT_ID
+  WHERE lso.TERM_CODE = '2014FA'
+    AND lso.NUM_ENROLLED_STUDENTS > 0
+),
+CombinedSubjects AS (
+  SELECT ts.SUBJECT_TITLE,
+         ts.DEPARTMENT_NAME,
+         ts.material_count,
+         NULL AS OFFER_DEPT_NAME,
+         NULL AS RESPONSIBLE_FACULTY_NAME,
+         NULL AS TIP_MATERIAL_STATUS_KEY,
+         NULL AS TOTAL_UNITS,
+         NULL AS window_column,
+         NULL AS SCHOOL_NAME,
+         NULL AS DEPARTMENT_PHONE_NUMBER,
+         'TopSubjects' AS Reason
+  FROM TopSubjects ts
+  UNION ALL
+  SELECT icte.SUBJECT_TITLE,
+         NULL AS DEPARTMENT_NAME,
+         NULL AS material_count,
+         icte.OFFER_DEPT_NAME,
+         icte.RESPONSIBLE_FACULTY_NAME,
+         icte.TIP_MATERIAL_STATUS_KEY,
+         icte.TOTAL_UNITS,
+         icte.window_column,
+         sd.SCHOOL_NAME,
+         ad.DEPARTMENT_PHONE_NUMBER,
+         'Subjects2014FA' AS Reason
+  FROM inner_cte icte
+  LEFT JOIN SIS_DEPARTMENT sd ON icte.OFFER_DEPT_NAME = sd.DEPARTMENT_NAME
+  LEFT JOIN SIS_ADMIN_DEPARTMENT ad ON sd.DEPARTMENT_CODE = ad.SIS_ADMIN_DEPARTMENT_CODE
+)
+SELECT SUBJECT_TITLE,
+       DEPARTMENT_NAME,
+       material_count,
+       OFFER_DEPT_NAME,
+       RESPONSIBLE_FACULTY_NAME,
+       TIP_MATERIAL_STATUS_KEY,
+       TOTAL_UNITS,
+       window_column,
+       SCHOOL_NAME,
+       DEPARTMENT_PHONE_NUMBER,
+       Reason
+FROM CombinedSubjects;

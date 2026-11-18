@@ -1,0 +1,57 @@
+WITH dept_reserved AS (
+    SELECT
+        d.DEPARTMENT_CODE,
+        d.DEPARTMENT_NAME,
+        d.DEPARTMENT_FULL_NAME,
+        d.SCHOOL_NAME,
+        COUNT(r.LIBRARY_RESERVE_CATALOG_KEY) AS total_reserved_materials
+    FROM SIS_DEPARTMENT d
+    JOIN LIBRARY_SUBJECT_OFFERED l
+      ON d.DEPARTMENT_CODE = l.OFFER_DEPT_CODE
+    JOIN LIBRARY_RESERVE_MATRL_DETAIL r
+      ON l.LIBRARY_SUBJECT_OFFERED_KEY = r.LIBRARY_SUBJECT_OFFERED_KEY
+    WHERE d.SCHOOL_NAME IN ('Engineering', 'Science')
+    GROUP BY d.DEPARTMENT_CODE, d.DEPARTMENT_NAME, d.DEPARTMENT_FULL_NAME, d.SCHOOL_NAME
+    HAVING COUNT(r.LIBRARY_RESERVE_CATALOG_KEY) > 20
+),
+subject_rows AS (
+    SELECT DISTINCT
+        l.LIBRARY_SUBJECT_OFFERED_KEY,
+        l.OFFER_DEPT_CODE,
+        l.SUBJECT_TITLE,
+        l.TERM_CODE,
+        l.OFFER_DEPT_NAME,
+        l.RESPONSIBLE_FACULTY_NAME,
+        l.NUM_ENROLLED_STUDENTS
+    FROM LIBRARY_SUBJECT_OFFERED l
+    JOIN LIBRARY_RESERVE_MATRL_DETAIL r
+      ON l.LIBRARY_SUBJECT_OFFERED_KEY = r.LIBRARY_SUBJECT_OFFERED_KEY
+    JOIN SIS_DEPARTMENT d
+      ON l.OFFER_DEPT_CODE = d.DEPARTMENT_CODE
+    WHERE d.SCHOOL_NAME IN ('Engineering', 'Science')
+)
+SELECT
+    dr.DEPARTMENT_NAME,
+    dr.total_reserved_materials,
+    sr.SUBJECT_TITLE,
+    sr.TERM_CODE,
+    sr.OFFER_DEPT_NAME,
+    sr.RESPONSIBLE_FACULTY_NAME,
+    dr.DEPARTMENT_FULL_NAME,
+    dr.SCHOOL_NAME,
+    MAX(sr.NUM_ENROLLED_STUDENTS) OVER (
+        ORDER BY sr.LIBRARY_SUBJECT_OFFERED_KEY
+        ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING
+    ) AS max_enrolled_students,
+    ROUND(
+        dr.total_reserved_materials / NULLIF(
+            MAX(sr.NUM_ENROLLED_STUDENTS) OVER (
+                ORDER BY sr.LIBRARY_SUBJECT_OFFERED_KEY
+                ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING
+            ), 0),
+        2
+    ) AS reserved_materials_per_max_enrolled_students
+FROM dept_reserved dr
+JOIN subject_rows sr
+  ON dr.DEPARTMENT_CODE = sr.OFFER_DEPT_CODE
+ORDER BY reserved_materials_per_max_enrolled_students DESC

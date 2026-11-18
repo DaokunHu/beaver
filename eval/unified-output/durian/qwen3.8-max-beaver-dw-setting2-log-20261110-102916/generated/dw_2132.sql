@@ -1,0 +1,51 @@
+WITH ChemistrySubjects AS (
+    SELECT t0.SUBJECT_ID,
+           t0.SUBJECT_TITLE,
+           t0.OFFER_DEPT_CODE,
+           t0.OFFER_DEPT_NAME,
+           t0.NUM_ENROLLED_STUDENTS,
+           t1.DEPARTMENT_FULL_NAME,
+           t1.SCHOOL_NAME,
+           MIN(t0.NUM_ENROLLED_STUDENTS) OVER (PARTITION BY t0.OFFER_DEPT_CODE ORDER BY t0.OFFER_DEPT_CODE) AS min_enrolled_students
+    FROM TIP_SUBJECT_OFFERED t0
+    JOIN STUDENT_DEPARTMENT t1 ON t0.OFFER_DEPT_CODE = t1.DEPARTMENT_CODE
+    WHERE t0.TERM_CODE = '2017JA'
+      AND t0.OFFER_DEPT_NAME = 'Chemistry'
+      AND t0.OFFER_DEPT_CODE = '5'
+),
+DepartmentUnitsVariance AS (
+    SELECT sd.DEPARTMENT_NAME,
+           sd.DEPARTMENT_CODE,
+           VARIANCE(sos.TOTAL_UNITS) AS total_units_variance
+    FROM COURSE_CATALOG_SUBJECT_OFFERED cso
+    JOIN SIS_DEPARTMENT sd ON cso.DEPARTMENT_CODE = sd.DEPARTMENT_CODE
+    JOIN SUBJECT_OFFERED_SUMMARY sos ON sd.DEPARTMENT_CODE = sos.OFFER_DEPT_CODE
+    WHERE cso.ACADEMIC_YEAR = 2022
+      AND sd.IS_DEGREE_GRANTING = 'Y'
+      AND sd.DEPARTMENT_CODE <> '7'
+    GROUP BY sd.DEPARTMENT_NAME, sd.DEPARTMENT_CODE
+),
+DepartmentAvgEnrollment AS (
+    SELECT sd.DEPARTMENT_CODE,
+           AVG(sos.NUM_ENROLLED_STUDENTS) AS avg_enrolled_students
+    FROM SUBJECT_OFFERED_SUMMARY sos
+    JOIN SIS_DEPARTMENT sd ON sos.OFFER_DEPT_CODE = sd.DEPARTMENT_CODE
+    WHERE sos.TERM_CODE LIKE '2022%'
+      AND sd.IS_DEGREE_GRANTING = 'Y'
+    GROUP BY sd.DEPARTMENT_CODE
+)
+SELECT cs.SUBJECT_ID,
+       cs.SUBJECT_TITLE,
+       cs.OFFER_DEPT_CODE,
+       cs.OFFER_DEPT_NAME,
+       cs.NUM_ENROLLED_STUDENTS,
+       cs.DEPARTMENT_FULL_NAME,
+       cs.SCHOOL_NAME,
+       cs.min_enrolled_students,
+       duv.DEPARTMENT_NAME,
+       duv.total_units_variance,
+       dae.avg_enrolled_students
+FROM ChemistrySubjects cs
+JOIN DepartmentUnitsVariance duv ON cs.OFFER_DEPT_CODE = duv.DEPARTMENT_CODE
+JOIN DepartmentAvgEnrollment dae ON cs.OFFER_DEPT_CODE = dae.DEPARTMENT_CODE
+ORDER BY cs.OFFER_DEPT_CODE, duv.total_units_variance DESC

@@ -190,6 +190,14 @@ eval/dailsql/dailsql
 eval/fewshot/output
 eval/fewshot/fewshot
 
+# eval/durian (generated: vector store, logs, run outputs, submissions)
+eval/durian/Agent/zvec_db/
+eval/durian/Agent/logs/
+eval/durian/scripts/output/
+eval/durian/output/
+eval/durian/data/
+eval/durian/Eval/
+
 eval/unified-output/
 eval/beaver-eval
 

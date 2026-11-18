@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_5415",
+  "question": "For each subject offered by the Chemistry department (Course 5), provide the subject title, term code, offering department name, responsible faculty name, department full name, school name, and the maximum number of enrolled students for each subject considering the current row and the next 2 rows ordered by subject offered key, but only include subjects that have course materials. Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the solution:**\n\n- **Tables**: `TIP_SUBJECT_OFFERED` (t0) joined to `STUDENT_DEPARTMENT` (t1) on `OFFER_DEPT_CODE = DEPARTMENT_CODE` — the documented 1:1 department join with no fan-out risk.\n- **Filters** (per domain hints and precedents dw_2181/dw_2560):\n  - `OFFER_DEPT_NAME = 'Chemistry'` — the Chemistry department (Course 5)\n  - `IS_NO_COURSE_MATERIAL = 'N'` — subjects that have course materials\n  - `NUM_ENROLLED_STUDENTS >= 0` and `TERM_CODE IS NOT NULL` — standard hygiene filters from the same-shape precedent metrics\n- **Window measure**: `MAX(NUM_ENROLLED_STUDENTS) OVER (ORDER BY TIP_SUBJECT_OFFERED_KEY ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING)` — the maximum enrolled students considering the current row and the next 2 rows ordered by the subject offered key, unrounded.\n- **SELECT list**: exactly the 7 requested columns in the asked order — subject title, term code, offering department name, responsible faculty name, department full name, school name, and the windowed maximum enrolled students.\n\nNote: live query verification was not possible because the MySQL connection returned an access-denied error, but the query structure is identical to the verified precedent metrics dw_2181 and dw_2560 in the semantic network, which use the same tables, join keys, filters, and window frame for the same question shape.",
+  "error": "",
+  "elapsed_seconds": 84.9,
+  "session_id": "run_dw_5415_1794278993",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_104954_run_dw_5415_1794278993_rendered.log"
+}

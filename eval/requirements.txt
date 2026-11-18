@@ -14,3 +14,11 @@ nltk
 tiktoken
 spacy
 torch
+# Durian
+zvec
+PyYAML
+fastapi
+uvicorn[standard]
+sse-starlette
+pydantic
+datasets

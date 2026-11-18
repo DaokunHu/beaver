@@ -1,0 +1,18 @@
+WITH inner_cte AS (
+  SELECT c.SUBJECT_TITLE, d.DEPARTMENT_NAME, c.TOTAL_UNITS
+  FROM COURSE_CATALOG_SUBJECT_OFFERED c
+  JOIN SIS_DEPARTMENT d ON c.DEPARTMENT_CODE = d.DEPARTMENT_CODE
+  WHERE c.ACADEMIC_YEAR = 2022
+    AND c.IS_PRINTED_IN_BULLETIN = 'Y'
+    AND c.DEPARTMENT_CODE = '18'
+    AND d.DEPARTMENT_NAME = 'Mathematics'
+),
+avg_units AS (
+  SELECT AVG(TOTAL_UNITS) AS avg_total_units FROM inner_cte
+)
+SELECT i.SUBJECT_TITLE,
+       i.DEPARTMENT_NAME,
+       i.TOTAL_UNITS,
+       (i.TOTAL_UNITS - a.avg_total_units) AS deviation_from_avg_units
+FROM inner_cte i
+CROSS JOIN avg_units a

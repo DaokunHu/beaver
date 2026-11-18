@@ -1,0 +1,50 @@
+WITH course_stats AS (
+  SELECT scd.DEPARTMENT_NAME,
+         scd.COURSE_LEVEL,
+         COUNT(DISTINCT scd.COURSE) AS course_count,
+         MIN(ccc.TOTAL_UNITS) AS min_total_units,
+         COUNT(DISTINCT CASE WHEN ccc.DESIGN_UNITS >= 3 THEN scd.COURSE END) AS courses_with_design_units_3_or_more
+  FROM SIS_COURSE_DESCRIPTION scd
+  JOIN SIS_DEPARTMENT sd ON scd.DEPARTMENT = sd.DEPARTMENT_CODE
+  JOIN CIS_COURSE_CATALOG ccc ON sd.DEPARTMENT_CODE = ccc.DEPARTMENT_CODE
+  WHERE scd.IS_DEGREE_GRANTING = 'Y'
+    AND ccc.TOTAL_UNITS > 6
+  GROUP BY scd.DEPARTMENT_NAME, scd.COURSE_LEVEL
+),
+subject_rows AS (
+  SELECT at.ACADEMIC_YEAR,
+         at.ACADEMIC_YEAR_DESC,
+         ccso.DEPARTMENT_NAME,
+         ccso.SUBJECT_ID,
+         ccso.TOTAL_UNITS
+  FROM ACADEMIC_TERMS at
+  JOIN COURSE_CATALOG_SUBJECT_OFFERED ccso ON at.TERM_CODE = ccso.EFFECTIVE_TERM_CODE
+  WHERE at.IS_REGULAR_TERM = 'Y'
+),
+dept_year_stats AS (
+  SELECT ACADEMIC_YEAR,
+         ACADEMIC_YEAR_DESC,
+         DEPARTMENT_NAME,
+         AVG(TOTAL_UNITS) AS avg_total_units,
+         STDDEV(TOTAL_UNITS) AS stddev_total_units
+  FROM subject_rows
+  GROUP BY ACADEMIC_YEAR, ACADEMIC_YEAR_DESC, DEPARTMENT_NAME
+)
+SELECT cs.DEPARTMENT_NAME,
+       cs.COURSE_LEVEL,
+       cs.course_count,
+       cs.min_total_units,
+       cs.courses_with_design_units_3_or_more,
+       sr.ACADEMIC_YEAR,
+       sr.ACADEMIC_YEAR_DESC,
+       sr.SUBJECT_ID,
+       sr.TOTAL_UNITS,
+       d.avg_total_units,
+       d.stddev_total_units,
+       (sr.TOTAL_UNITS - d.avg_total_units) AS deviation_from_avg
+FROM course_stats cs
+JOIN subject_rows sr ON cs.DEPARTMENT_NAME = sr.DEPARTMENT_NAME
+JOIN dept_year_stats d ON sr.ACADEMIC_YEAR = d.ACADEMIC_YEAR
+                      AND sr.ACADEMIC_YEAR_DESC = d.ACADEMIC_YEAR_DESC
+                      AND sr.DEPARTMENT_NAME = d.DEPARTMENT_NAME
+ORDER BY cs.DEPARTMENT_NAME, cs.COURSE_LEVEL, sr.ACADEMIC_YEAR, deviation_from_avg DESC;

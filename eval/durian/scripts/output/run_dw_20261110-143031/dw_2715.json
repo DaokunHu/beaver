@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_2715",
+  "question": "For subjects offered in the term with code '2025FA', show the subject ID, subject title, offering department name, number of enrolled students, term description, academic year, term start date, term end date, term parameter, and the difference between the number of enrolled students for each subject and the minimum number of enrolled students in its offering department. Do not return any rounded answers.",
+  "setting": 1,
+  "answer": "The SQL has been submitted successfully. \n\n**Final query summary:**\n- **TIP_SUBJECT_OFFERED** (filtered to `TERM_CODE = '2025FA'`) supplies the subject ID, subject title, offering department name, and number of enrolled students.\n- **ACADEMIC_TERMS_ALL** (joined on TERM_CODE) supplies the term description, academic year, term start date, and term end date.\n- **ACADEMIC_TERM_PARAMETER** (joined on TERM_CODE) supplies the term parameter (e.g., 'SIS_CURRENT_TERM').\n- The last column computes `NUM_ENROLLED_STUDENTS - MIN(NUM_ENROLLED_STUDENTS) OVER (PARTITION BY OFFER_DEPT_NAME)` — the unrounded difference between each subject's enrollment and the minimum enrollment within its offering department.\n\nThis follows the exact pattern of precedent metrics dw_3498 and dw_3684 in the semantic network, which use the identical three-table join chain and department-partitioned minimum window for the same '2025FA' task shape.",
+  "error": "",
+  "elapsed_seconds": 119.5,
+  "session_id": "run_dw_2715_1794295847",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_153047_run_dw_2715_1794295847_rendered.log"
+}

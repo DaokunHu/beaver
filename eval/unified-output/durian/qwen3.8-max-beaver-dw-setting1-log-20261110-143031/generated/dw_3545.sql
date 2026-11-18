@@ -1,0 +1,42 @@
+WITH dept_year_stats AS (
+    SELECT
+        l.OFFER_DEPT_NAME AS DEPARTMENT_NAME,
+        t.ACADEMIC_YEAR,
+        COUNT(DISTINCT so.SUBJECT_ID) AS num_unique_subjects_offered,
+        MIN(t.TERM_START_DATE) AS min_term_start_date
+    FROM LIBRARY_SUBJECT_OFFERED l
+    JOIN ACADEMIC_TERMS t ON l.TERM_CODE = t.TERM_CODE
+    JOIN SUBJECT_OFFERED so ON t.TERM_CODE = so.TERM_CODE
+    WHERE l.NUM_ENROLLED_STUDENTS > 3
+    GROUP BY l.OFFER_DEPT_NAME, t.ACADEMIC_YEAR
+),
+subjects_2017ja AS (
+    SELECT
+        t0.SUBJECT_TITLE,
+        t0.NUM_ENROLLED_STUDENTS,
+        t0.RESPONSIBLE_FACULTY_NAME,
+        t0.OFFER_DEPT_NAME,
+        t1.DEPARTMENT_FULL_NAME,
+        t1.SCHOOL_NAME,
+        MIN(t0.NUM_ENROLLED_STUDENTS) OVER (
+            ORDER BY t1.DEPARTMENT_CODE
+            ROWS BETWEEN 3 PRECEDING AND 1 FOLLOWING
+        ) AS min_enrolled_window
+    FROM TIP_SUBJECT_OFFERED t0
+    JOIN STUDENT_DEPARTMENT t1 ON t0.OFFER_DEPT_CODE = t1.DEPARTMENT_CODE
+    WHERE t0.TERM_CODE = '2017JA'
+)
+SELECT
+    d.DEPARTMENT_NAME,
+    d.ACADEMIC_YEAR,
+    d.num_unique_subjects_offered,
+    d.min_term_start_date,
+    s.SUBJECT_TITLE,
+    s.NUM_ENROLLED_STUDENTS,
+    s.RESPONSIBLE_FACULTY_NAME,
+    s.OFFER_DEPT_NAME,
+    s.DEPARTMENT_FULL_NAME,
+    s.SCHOOL_NAME,
+    s.min_enrolled_window
+FROM dept_year_stats d
+JOIN subjects_2017ja s ON d.DEPARTMENT_NAME = s.OFFER_DEPT_NAME

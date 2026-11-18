@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_5415",
+  "question": "For each subject offered by the Chemistry department (Course 5), provide the subject title, term code, offering department name, responsible faculty name, department full name, school name, and the maximum number of enrolled students for each subject considering the current row and the next 2 rows ordered by subject offered key, but only include subjects that have course materials. Do not return any rounded answers.",
+  "setting": 0,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the solution:**\n\n- **Base table**: `TIP_SUBJECT_OFFERED` — the only table carrying both the `TIP_SUBJECT_OFFERED_KEY` (\"subject offered key\") and the `IS_NO_COURSE_MATERIAL` flag needed for the \"has course materials\" filter (`= 'N'`).\n- **Join**: `STUDENT_DEPARTMENT` on `OFFER_DEPT_CODE = DEPARTMENT_CODE` (1:1, no fan-out) to supply `DEPARTMENT_FULL_NAME` and `SCHOOL_NAME`.\n- **Filters**: Chemistry department (`OFFER_DEPT_NAME = 'Chemistry'`), has course materials (`IS_NO_COURSE_MATERIAL = 'N'`), non-null term code, and non-negative enrollment — matching the exact-shape precedent metric `dw_2181`.\n- **Window function**: `MAX(NUM_ENROLLED_STUDENTS) OVER (ORDER BY TIP_SUBJECT_OFFERED_KEY ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING)` — the maximum enrollment over the current row and next 2 rows ordered by subject offered key, with no rounding.\n- **SELECT list**: exactly the 7 requested columns in the asked order — subject title, term code, offering department name, responsible faculty name, department full name, school name, and the windowed maximum enrolled students.\n\nNote: runtime verification via `mysql_query` was not possible (the database server returned authentication error 1045 on every attempt), so the query was constructed to exactly follow the documented, verified precedent `dw_2181` from the semantic network.",
+  "error": "",
+  "elapsed_seconds": 92.4,
+  "session_id": "run_dw_5415_1794199532",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261109_124532_run_dw_5415_1794199532_rendered.log"
+}

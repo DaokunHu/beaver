@@ -1,0 +1,46 @@
+WITH MathSubjects2024 AS (
+    SELECT
+        t0.SUBJECT_ID,
+        t0.SUBJECT_CODE,
+        t0.SUBJECT_NUMBER,
+        t0.DEPARTMENT_NAME,
+        t0.SUBJECT_SHORT_TITLE,
+        t0.SUBJECT_TITLE,
+        t0.LECTURE_UNITS,
+        t0.LAB_UNITS,
+        t0.TOTAL_UNITS,
+        t0.GRADE_TYPE,
+        t0.GRADE_RULE,
+        MIN(t0.TOTAL_UNITS) OVER (PARTITION BY t0.DEPARTMENT_CODE ORDER BY t0.DEPARTMENT_CODE) AS min_total_units_by_dept
+    FROM COURSE_CATALOG_SUBJECT_OFFERED t0
+    JOIN CIS_COURSE_CATALOG t1 ON t0.SUBJECT_ID = t1.SUBJECT_ID
+    WHERE t0.ACADEMIC_YEAR = 2024
+      AND t0.DEPARTMENT_NAME = 'Mathematics'
+),
+GeoMean AS (
+    SELECT
+        DEPARTMENT_NAME,
+        EXP(AVG(LN(TOTAL_UNITS))) AS geometric_mean_total_units
+    FROM COURSE_CATALOG_SUBJECT_OFFERED
+    WHERE IS_OFFERED_THIS_YEAR = 'Y'
+      AND TOTAL_UNITS > 0
+      AND DEPARTMENT_NAME = 'Mathematics'
+    GROUP BY DEPARTMENT_NAME
+)
+SELECT
+    ms.SUBJECT_ID,
+    ms.SUBJECT_CODE,
+    ms.SUBJECT_NUMBER,
+    ms.DEPARTMENT_NAME,
+    ms.SUBJECT_SHORT_TITLE,
+    ms.SUBJECT_TITLE,
+    ms.LECTURE_UNITS,
+    ms.LAB_UNITS,
+    ms.TOTAL_UNITS,
+    ms.GRADE_TYPE,
+    ms.GRADE_RULE,
+    ms.min_total_units_by_dept,
+    gm.geometric_mean_total_units
+FROM MathSubjects2024 ms
+JOIN GeoMean gm ON ms.DEPARTMENT_NAME = gm.DEPARTMENT_NAME
+ORDER BY ms.DEPARTMENT_NAME, ms.SUBJECT_CODE

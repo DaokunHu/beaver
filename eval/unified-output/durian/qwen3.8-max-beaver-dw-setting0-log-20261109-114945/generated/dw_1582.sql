@@ -1,0 +1,38 @@
+WITH Subquery1 AS (
+    SELECT t1.SUBJECT_CODE,
+           t1.SUBJECT_TITLE,
+           t1.DEPARTMENT_NAME,
+           t0.SCHOOL_NAME,
+           COUNT(t1.SUBJECT_CODE) OVER (PARTITION BY t0.SCHOOL_NAME) AS subject_count
+    FROM SIS_DEPARTMENT t0
+    JOIN COURSE_CATALOG_SUBJECT_OFFERED t1
+      ON t0.DEPARTMENT_CODE = t1.DEPARTMENT_CODE
+    WHERE t1.ACADEMIC_YEAR = 2024
+      AND t1.TOTAL_UNITS = 12
+      AND t1.DEPARTMENT_NAME = 'Mathematics'
+),
+Subquery2 AS (
+    SELECT scd.DEPARTMENT_NAME,
+           scd.SCHOOL_NAME,
+           VARIANCE(ccc.TOTAL_UNITS) AS total_units_variance,
+           STDDEV(ccc.TOTAL_UNITS) AS total_units_stddev
+    FROM SIS_COURSE_DESCRIPTION scd
+    JOIN SIS_SUBJECT_CODE ssc ON scd.COURSE = ssc.SUBJECT_CODE
+    JOIN CIS_COURSE_CATALOG ccc ON ssc.SUBJECT_CODE = ccc.SUBJECT_CODE
+    WHERE ccc.TOTAL_UNITS IS NOT NULL
+      AND scd.IS_DEGREE_GRANTING = 'Y'
+    GROUP BY scd.DEPARTMENT_NAME, scd.SCHOOL_NAME
+)
+SELECT s1.SUBJECT_CODE,
+       s1.SUBJECT_TITLE,
+       s1.DEPARTMENT_NAME,
+       s1.SCHOOL_NAME,
+       s1.subject_count,
+       s2.total_units_variance,
+       s2.total_units_stddev
+FROM Subquery1 s1
+JOIN Subquery2 s2
+  ON s1.DEPARTMENT_NAME = s2.DEPARTMENT_NAME
+ AND s1.SCHOOL_NAME = s2.SCHOOL_NAME
+WHERE s1.subject_count >= 2
+ORDER BY s1.SCHOOL_NAME, s1.SUBJECT_CODE

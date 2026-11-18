@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_5711",
+  "question": "For each department name and school name, where the department is degree granting and the department is Mathematics (Course 18), provide the number of unique courses and the minimum CIP program code from the course descriptions. Do not return any rounded answers.",
+  "setting": 1,
+  "answer": "The final SQL has been submitted. \n\n**Summary**: The query joins `SIS_COURSE_DESCRIPTION` to `SIS_DEPARTMENT` on `DEPARTMENT = DEPARTMENT_CODE` (the documented join key), filters for degree-granting departments (`IS_DEGREE_GRANTING = 'Y'`) where the department is Mathematics (Course 18), and returns exactly the four requested columns in order: department name, school name, the count of unique courses (`COUNT(DISTINCT COURSE)`), and the minimum CIP program code (`MIN(CIP_PROGRAM_CODE)`), grouped by department name and school name.\n\nNote: live verification via `mysql_query` was not possible because the database connection returned an \"Access denied\" error on every attempt; the query was constructed strictly from the semantic-network evidence (table/column definitions, join edges, concept decision guides) and the provided hints, which fully specify the tables, column mappings, and join keys.",
+  "error": "",
+  "elapsed_seconds": 71.4,
+  "session_id": "run_dw_5711_1794299722",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_163522_run_dw_5711_1794299722_rendered.log"
+}

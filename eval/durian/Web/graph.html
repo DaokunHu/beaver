@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semantic Network Visualization · AntV G6</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍉</text></svg>">
+<script src="https://unpkg.com/@antv/g6@4.8.24/dist/g6.min.js"></script>
+<style>
+:root {
+  --bg: #f5f5fa;
+  --panel: #ffffff;
+  --text: #1e1e2e;
+  --muted: #8b8ba7;
+  --border: #e6e6ee;
+  --accent: #4f46e5;
+  --accent-soft: #ede9fe;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Top bar ── */
+#topbar {
+  height: 52px;
+  background: var(--panel);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  flex-shrink: 0;
+}
+#topbar-title {
+  font-size: 15px;
+  font-weight: bold;
+}
+#topbar-title a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 12px;
+  margin-left: 12px;
+  font-weight: normal;
+}
+#topbar-stats {
+  font-size: 12px;
+  color: var(--muted);
+}
+#topbar-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+#topbar-controls label {
+  font-size: 11px;
+  color: var(--muted);
+}
+#topbar-controls select,
+#topbar-controls button {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 12px;
+  background: var(--panel);
+  cursor: pointer;
+  font-family: inherit;
+}
+#topbar-controls button {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: #c7d2fe;
+}
+#topbar-controls button:hover {
+  background: #c7d2fe;
+}
+#topbar-controls select:focus,
+#topbar-controls button:focus,
+#search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Search box */
+#search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+#search-input {
+  padding: 4px 24px 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 12px;
+  background: var(--panel);
+  width: 160px;
+  font-family: inherit;
+  transition: width 0.2s, border-color 0.2s;
+}
+#search-input:focus {
+  width: 220px;
+}
+#search-input::placeholder {
+  color: var(--muted);
+}
+#search-clear {
+  position: absolute;
+  right: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 15px;
+  padding: 0 4px;
+  line-height: 1;
+  display: none;
+}
+#search-clear.visible {
+  display: block;
+}
+#search-clear:hover {
+  color: var(--text);
+}
+#topbar-controls optgroup {
+  font-size: 11px;
+  font-style: normal;
+  color: var(--muted);
+}
+#topbar-controls optgroup option {
+  color: var(--text);
+}
+
+/* ── Main body ── */
+#main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Graph container */
+#graph-container {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  background: var(--bg);
+  overflow: hidden;
+}
+#graph-container canvas {
+  display: block;
+}
+
+/* Side detail panel */
+#detail-panel {
+  width: 340px;
+  min-width: 340px;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: none;
+}
+#detail-panel.visible {
+  display: block;
+}
+#detail-panel .dp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+#detail-panel .dp-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+#detail-panel .dp-close {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 18px;
+  border: none;
+  background: none;
+}
+#detail-panel .dp-close:hover {
+  color: var(--text);
+}
+#detail-panel .dp-field {
+  margin-bottom: 10px;
+}
+#detail-panel .dp-field-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+#detail-panel .dp-field-value {
+  font-size: 13px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+#detail-panel .dp-field-value code {
+  font-family: "SF Mono", Consolas, monospace;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+#detail-panel .dp-field-value pre {
+  background: #1e1e2e;
+  color: #e0e0f0;
+  padding: 10px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+#detail-panel .dp-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 4px;
+}
+#detail-panel .dp-neighbors {
+  margin-top: 12px;
+}
+#detail-panel .dp-neighbors-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+#detail-panel .dp-neighbor-item {
+  font-size: 12px;
+  padding: 4px 8px;
+  margin-bottom: 3px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.12s;
+}
+#detail-panel .dp-neighbor-item:hover {
+  background: var(--accent-soft);
+}
+#detail-panel .dp-neighbor-arrow {
+  color: var(--muted);
+  font-size: 11px;
+}
+#detail-panel .dp-neighbor-type {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* Loading indicator */
+#loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Legend */
+#legend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 11px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+#legend .legend-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+#legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+#legend .legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+#legend .legend-count {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 11px;
+}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div id="topbar">
+  <div id="topbar-title">
+    Semantic Network Visualization
+  </div>
+  <div id="topbar-stats"></div>
+  <div id="topbar-controls">
+    <label>YAML：</label>
+    <select id="yaml-select" title="Select a semantic network YAML file"></select>
+    <label>Layout:</label>
+    <select id="layout-select">
+      <option value="cluster" selected>Cluster</option>
+      <option value="zone">Zone</option>
+      <option value="force">Force</option>
+      <option value="dagre">Dagre</option>
+      <option value="circular">Circular</option>
+      <option value="radial">Radial</option>
+      <option value="grid">Grid</option>
+    </select>
+    <label>Type filter:</label>
+    <select id="filter-select">
+      <option value="all">All</option>
+      <optgroup label="── Tables ──">
+        <option value="table">Tables only</option>
+      </optgroup>
+      <optgroup label="── Metrics ──">
+        <option value="metric">All metrics</option>
+      </optgroup>
+      <optgroup label="── Concepts ──">
+        <option value="concept">Business concepts only</option>
+        <option value="column_concept">Column concepts only</option>
+      </optgroup>
+    </select>
+    <div id="search-wrap">
+      <input type="text" id="search-input" placeholder="Search nodes..." title="Search by name, ID, description, SQL (press / to focus)">
+      <button id="search-clear" title="Clear search">&times;</button>
+    </div>
+    <button id="btn-fit">Fit canvas</button>
+    <button id="btn-reload">Reload data</button>
+  </div>
+</div>
+
+<!-- Main body -->
+<div id="main">
+  <div id="graph-container">
+    <div id="loading">Loading...</div>
+    <div id="legend">
+      <div class="legend-title">Node types</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Table <span class="legend-count" data-type="table">0</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>Metric <span class="legend-count" data-type="metric">0</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Concept <span class="legend-count" data-type="concept">0</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>Column Concept <span class="legend-count" data-type="column_concept">0</span></div>
+    </div>
+  </div>
+
+  <!-- Detail panel -->
+  <div id="detail-panel">
+    <div class="dp-header">
+      <div class="dp-title" id="dp-title">Node details</div>
+      <button class="dp-close" id="dp-close">&times;</button>
+    </div>
+    <div id="dp-content"></div>
+    <div class="dp-neighbors" id="dp-neighbors"></div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// Configuration
+// ──────────────────────────────────────────────
+
+const NODE_STYLES = {
+  table:          { fill: "#3b82f6", stroke: "#1e40af", textColor: "#1e3a8a", size: 40 },
+  concept:        { fill: "#f59e0b", stroke: "#b45309", textColor: "#92400e", size: 42 },
+  column_concept: { fill: "#8b5cf6", stroke: "#6d28d9", textColor: "#5b21b6", size: 40 },
+  metric:         { fill: "#ef4444", stroke: "#991b1b", textColor: "#991b1b", size: 38 },
+};
+
+// Get node style (unknown types fall back to the metric style)
+function getNodeStyle(nodeType) {
+  return NODE_STYLES[nodeType] || NODE_STYLES.metric;
+}
+
+const EDGE_COLORS = {
+  joins: "#a7f3d0",
+};
+
+const EDGE_LABELS = {
+  joins: "joins",
+};
+
+// ──────────────────────────────────────────────
+// State
+// ──────────────────────────────────────────────
+
+let graph = null;
+let rawData = { nodes: [], edges: [] };
+
+// ──────────────────────────────────────────────
+// Initialization
+// ──────────────────────────────────────────────
+
+async function loadYamlList() {
+  const resp = await fetch("/api/semantic/yamls");
+  const data = await resp.json();
+  const select = document.getElementById("yaml-select");
+  select.innerHTML = "";
+  for (const item of data.files) {
+    const opt = document.createElement("option");
+    opt.value = item.file;
+    opt.textContent = item.label;
+    select.appendChild(opt);
+  }
+}
+
+async function loadData() {
+  const yamlFile = document.getElementById("yaml-select").value || "";
+  const url = "/api/semantic/graph" + (yamlFile ? "?yaml=" + encodeURIComponent(yamlFile) : "");
+  const resp = await fetch(url);
+  rawData = await resp.json();
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("topbar-stats").textContent =
+    `${rawData.nodes.length} nodes · ${rawData.edges.length} edges`;
+  renderGraph();
+}
+
+// Helper: add directly connected nodes (1-hop neighbors) to the node set
+function addDirectNeighbors(ids, nodes) {
+  const original = new Set(ids);
+  for (const e of rawData.edges) {
+    if (original.has(e.source) && !ids.has(e.target)) {
+      const tn = rawData.nodes.find(n => n.id === e.target);
+      if (tn) { ids.add(tn.id); nodes.push(tn); }
+    }
+    if (original.has(e.target) && !ids.has(e.source)) {
+      const sn = rawData.nodes.find(n => n.id === e.source);
+      if (sn) { ids.add(sn.id); nodes.push(sn); }
+    }
+  }
+}
+
+function getFilteredData() {
+  const filter = document.getElementById("filter-select").value;
+  const searchText = (document.getElementById("search-input").value || "").trim().toLowerCase();
+
+  // ── Step 1: type filtering ──
+  let typeNodes = [];
+  let typeIds = new Set();
+
+  if (filter === "all") {
+    typeNodes = rawData.nodes.slice();
+    typeIds = new Set(rawData.nodes.map(n => n.id));
+  } else if (filter === "metric") {
+    // All metrics + directly connected nodes
+    for (const n of rawData.nodes) {
+      if (n.nodeType === "metric") { typeIds.add(n.id); typeNodes.push(n); }
+    }
+    addDirectNeighbors(typeIds, typeNodes);
+  } else if (filter === "table") {
+    for (const n of rawData.nodes) {
+      if (n.nodeType === "table") { typeIds.add(n.id); typeNodes.push(n); }
+    }
+  } else if (filter === "concept") {
+    for (const n of rawData.nodes) {
+      if (n.nodeType === "concept") { typeIds.add(n.id); typeNodes.push(n); }
+    }
+    addDirectNeighbors(typeIds, typeNodes);
+  } else if (filter === "column_concept") {
+    for (const n of rawData.nodes) {
+      if (n.nodeType === "column_concept") { typeIds.add(n.id); typeNodes.push(n); }
+    }
+    addDirectNeighbors(typeIds, typeNodes);
+  }
+
+  // ── Step 2: search filtering (layered on top of the type filter results) ──
+  let resultNodes, resultIds;
+  if (searchText) {
+    const matching = typeNodes.filter(n => {
+      return (n.label && n.label.toLowerCase().includes(searchText)) ||
+             (n.id && n.id.toLowerCase().includes(searchText)) ||
+             (n.desc && n.desc.toLowerCase().includes(searchText)) ||
+             (n.sql && n.sql.toLowerCase().includes(searchText));
+    });
+    resultIds = new Set(matching.map(n => n.id));
+    // Add directly connected nodes (within the type filter scope) for context
+    for (const e of rawData.edges) {
+      if (resultIds.has(e.source) && typeIds.has(e.target)) resultIds.add(e.target);
+      if (resultIds.has(e.target) && typeIds.has(e.source)) resultIds.add(e.source);
+    }
+    resultNodes = typeNodes.filter(n => resultIds.has(n.id));
+  } else {
+    resultIds = typeIds;
+    resultNodes = typeNodes;
+  }
+
+  const resultEdges = rawData.edges.filter(
+    e => resultIds.has(e.source) && resultIds.has(e.target)
+  );
+  return { nodes: resultNodes, edges: resultEdges };
+}
+
+function buildG6Data(data) {
+  const nodes = data.nodes.map(n => {
+    const style = getNodeStyle(n.nodeType);
+    return {
+      id: n.id,
+      nodeType: n.nodeType,
+      cluster: n.nodeType,  // Cluster field: nodes of the same type attract each other
+      label: n.label,
+      desc: n.desc || "",
+      category: n.category || "",
+      sql: n.sql || "",
+      operator: n.operator || "",
+      logic: n.logic || "",
+      columns: n.columns || [],
+      tables: n.tables || [],
+      comparisons: n.comparisons || [],
+      decision_guide: n.decision_guide || {},
+      difference: n.difference || "",
+      type: "circle",
+      style: {
+        fill: style.fill,
+        stroke: style.stroke,
+        lineWidth: 2,
+      },
+      label: n.label,
+      labelCfg: {
+        style: {
+          fill: style.textColor,
+          fontSize: n.nodeType === "table" ? 13 : 11,
+          fontWeight: n.nodeType === "metric" ? 700 : 500,
+          background: {
+            fill: "#ffffff",
+            padding: [2, 6, 2, 6],
+            radius: 4,
+            stroke: style.fill,
+            lineWidth: 1,
+          },
+        },
+        position: "bottom",
+        offset: 6,
+      },
+      size: style.size,
+    };
+  });
+
+  const edges = data.edges.map((e, i) => ({
+    id: `edge_${i}`,
+    source: e.source,
+    target: e.target,
+    edgeType: e.edgeType,
+    desc: e.desc || "",
+    columns: e.columns || [],
+    type: "cubic",
+    style: {
+      stroke: EDGE_COLORS[e.edgeType] || "#d1d5db",
+      lineWidth: 1.5,
+      endArrow: {
+        path: "M 0,0 L 6,3 L 6,-3 Z",
+        fill: EDGE_COLORS[e.edgeType] || "#d1d5db",
+      },
+    },
+    label: EDGE_LABELS[e.edgeType] || e.edgeType,
+    labelCfg: {
+      style: {
+        fontSize: 9,
+        fill: "#8b8ba7",
+        background: {
+          fill: "#ffffff",
+          padding: [2, 4, 2, 4],
+          radius: 3,
+        },
+      },
+      refY: 8,
+    },
+  }));
+
+  return { nodes, edges };
+}
+
+function getLayout(name) {
+  switch (name) {
+    case "force":
+      return {
+        type: "force",
+        preventOverlap: true,
+        nodeStrength: -60,
+        edgeStrength: 0.3,
+        collideStrength: 0.8,
+        nodeSize: 40,
+        linkDistance: 120,
+        alpha: 0.3,
+        alphaDecay: 0.028,
+        alphaMin: 0.01,
+        forceSimulation: undefined,
+      };
+    case "dagre":
+      return {
+        type: "dagre",
+        rankdir: "TB",
+        nodesep: 20,
+        ranksep: 50,
+      };
+    case "circular":
+      return {
+        type: "circular",
+        radius: 200,
+        divisions: 1,
+        ordering: "topology",
+      };
+    case "radial":
+      return {
+        type: "radial",
+        unitRadius: 80,
+        linkDistance: 100,
+        preventOverlap: true,
+        nodeSize: 40,
+      };
+    case "grid":
+      return {
+        type: "grid",
+        preventOverlap: true,
+        nodeSize: 40,
+      };
+    case "cluster":
+      // Force-directed + clustering: same-type nodes attract, different types repel
+      return {
+        type: "force",
+        preventOverlap: true,
+        nodeStrength: -80,
+        edgeStrength: 0.1,
+        collideStrength: 0.8,
+        nodeSize: 40,
+        linkDistance: 100,
+        alpha: 0.3,
+        alphaDecay: 0.028,
+        alphaMin: 0.01,
+        clustering: true,
+        clusterNodeStrength: -5,   // Attraction between nodes in the same cluster (negative = attract)
+        clusterEdgeStrength: 0.8, // Repulsion between different clusters
+        forceSimulation: undefined,
+      };
+    case "zone":
+      // Custom zone layout: one area per type
+      return { type: "zone" };
+    default:
+      return { type: "force" };
+  }
+}
+
+// ──────────────────────────────────────────────
+// Custom zone layout (Zone)
+// ──────────────────────────────────────────────
+
+// Register the custom layout
+if (typeof G6 !== "undefined" && G6.registerLayout) {
+  G6.registerLayout("zone", {
+    // Layout parameters
+    getDefaultCfg() {
+      return {
+        nodeSize: 40,
+        padding: 60,
+      };
+    },
+    // Execute the layout
+    execute() {
+      const nodes = this.nodes || [];
+      const width = this.width || 800;
+      const height = this.height || 600;
+      const padding = this.padding || 60;
+
+      // Node type zone configuration: one area center per type
+      const ZONE_CONFIG = [
+        { type: "table",          cx: 0.25, cy: 0.25, label: "Table" },
+        { type: "concept",        cx: 0.75, cy: 0.25, label: "Concept" },
+        { type: "column_concept", cx: 0.75, cy: 0.75, label: "Column Concept" },
+        { type: "metric",         cx: 0.50, cy: 0.50, label: "Metric" },
+      ];
+
+      // Group nodes by type
+      const groups = {};
+      for (const n of nodes) {
+        const t = n.nodeType || n.cluster || "metric";
+        if (!groups[t]) groups[t] = [];
+        groups[t].push(n);
+      }
+
+      // Arrange each area with a circular sub-layout
+      for (const zone of ZONE_CONFIG) {
+        const groupNodes = groups[zone.type] || [];
+        if (groupNodes.length === 0) continue;
+
+        const centerX = zone.cx * width;
+        const centerY = zone.cy * height;
+        const count = groupNodes.length;
+
+        // Area radius: computed dynamically from the node count
+        const radius = Math.max(60, Math.min(150, count * 12));
+
+        if (count === 1) {
+          groupNodes[0].x = centerX;
+          groupNodes[0].y = centerY;
+        } else {
+          // Circular arrangement
+          for (let i = 0; i < count; i++) {
+            const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+            groupNodes[i].x = centerX + Math.cos(angle) * radius;
+            groupNodes[i].y = centerY + Math.sin(angle) * radius;
+          }
+        }
+      }
+
+      // Handle unclassified nodes (place them at the canvas edge)
+      const classifiedTypes = ZONE_CONFIG.map(z => z.type);
+      const unclassified = nodes.filter(n =>
+        !classifiedTypes.includes(n.nodeType || n.cluster || "metric")
+      );
+      for (let i = 0; i < unclassified.length; i++) {
+        unclassified[i].x = padding + (i % 5) * 50;
+        unclassified[i].y = height - padding - Math.floor(i / 5) * 50;
+      }
+    },
+  });
+}
+
+// Update the node counts in the legend (based on the currently filtered data)
+function updateLegendCounts(nodes) {
+  const counts = {};
+  for (const n of nodes) {
+    counts[n.nodeType] = (counts[n.nodeType] || 0) + 1;
+  }
+  document.querySelectorAll(".legend-count").forEach(el => {
+    const type = el.getAttribute("data-type");
+    el.textContent = counts[type] || 0;
+  });
+}
+
+function renderGraph() {
+  const filteredData = getFilteredData();
+  const g6Data = buildG6Data(filteredData);
+  const layoutName = document.getElementById("layout-select").value;
+
+  // Update legend counts (based on the filtered data)
+  updateLegendCounts(filteredData.nodes);
+
+  // Update stats (showing filtered / total)
+  let statsText = `${filteredData.nodes.length} / ${rawData.nodes.length} nodes · ${filteredData.edges.length} / ${rawData.edges.length} edges`;
+  document.getElementById("topbar-stats").textContent = statsText;
+
+  // No-results hint
+  let noResults = document.getElementById("no-results");
+  if (filteredData.nodes.length === 0) {
+    if (!noResults) {
+      noResults = document.createElement("div");
+      noResults.id = "no-results";
+      noResults.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-size:14px;text-align:center;z-index:10;";
+      document.getElementById("graph-container").appendChild(noResults);
+    }
+    noResults.textContent = "No matching nodes";
+    noResults.style.display = "block";
+  } else if (noResults) {
+    noResults.style.display = "none";
+  }
+
+  if (graph) {
+    graph.destroy();
+    graph = null;
+  }
+
+  const container = document.getElementById("graph-container");
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  graph = new G6.Graph({
+    container: "graph-container",
+    width,
+    height,
+    data: g6Data,
+    layout: getLayout(layoutName),
+    modes: {
+      default: [
+        "drag-canvas",
+        "zoom-canvas",
+        "drag-node",
+        {
+          type: "tooltip",
+          formatText(model) {
+            const desc = model.desc || "No description";
+            const label = model.label || model.id;
+            return `<div style="padding:6px 10px;max-width:280px;font-size:11px;">
+              <div style="font-weight:600;margin-bottom:2px;">${label}</div>
+              <div style="color:#8b8ba7;">${desc}</div>
+            </div>`;
+          },
+        },
+      ],
+    },
+    defaultNode: {
+      type: "circle",
+      size: 36,
+      style: {
+        lineWidth: 2,
+      },
+    },
+    defaultEdge: {
+      type: "cubic",
+      style: {
+        lineWidth: 1.5,
+        endArrow: {
+          path: "M 0,0 L 6,3 L 6,-3 Z",
+          fill: "#d1d5db",
+        },
+      },
+    },
+    nodeStateStyles: {
+      selected: {
+        "shadowBlur": 20,
+        "shadowColor": "#4f46e5",
+        "lineWidth": 3,
+      },
+      highlight: {
+        "shadowBlur": 15,
+        "shadowColor": "#f59e0b",
+        "lineWidth": 3,
+      },
+      dim: {
+        "opacity": 0.2,
+      },
+    },
+    edgeStateStyles: {
+      selected: {
+        "lineWidth": 3,
+        "stroke": "#4f46e5",
+      },
+      highlight: {
+        "lineWidth": 2.5,
+        "stroke": "#f59e0b",
+      },
+      dim: {
+        "opacity": 0.15,
+      },
+    },
+  });
+
+  graph.on("node:click", (evt) => {
+    const node = evt.item;
+    const model = node.getModel();
+    showDetailPanel(model);
+    highlightNeighbors(model.id);
+  });
+
+  graph.on("edge:click", (evt) => {
+    const edge = evt.item;
+    const model = edge.getModel();
+    showEdgeDetailPanel(model);
+  });
+
+  graph.on("canvas:click", () => {
+    clearHighlight();
+    hideDetailPanel();
+  });
+
+  graph.data(g6Data);
+  graph.render();
+
+  // Show zone labels when using the zone layout
+  const zoneOverlay = document.getElementById("zone-overlay");
+  if (zoneOverlay) zoneOverlay.remove();
+  if (layoutName === "zone") {
+    showZoneLabels(container, width, height);
+  }
+
+  // Fit the canvas
+  setTimeout(() => {
+    graph.fitView(20);
+  }, 300);
+}
+
+// ──────────────────────────────────────────────
+// Zone layout area labels
+// ──────────────────────────────────────────────
+
+function showZoneLabels(container, width, height) {
+  const ZONE_CONFIG = [
+    { cx: 0.25, cy: 0.25, label: "Table",   color: "#3b82f6" },
+    { cx: 0.75, cy: 0.25, label: "Concept", color: "#f59e0b" },
+    { cx: 0.50, cy: 0.50, label: "Metric",  color: "#ef4444" },
+  ];
+  const overlay = document.createElement("div");
+  overlay.id = "zone-overlay";
+  overlay.style.cssText = "position:absolute;inset:0;pointer-events:none;z-index:5;";
+  for (const zone of ZONE_CONFIG) {
+    const label = document.createElement("div");
+    label.textContent = zone.label;
+    label.style.cssText = `position:absolute;left:${zone.cx * 100}%;top:${zone.cy * 100}%;transform:translate(-50%,-50%);font-size:13px;font-weight:700;color:${zone.color};opacity:0.25;white-space:nowrap;text-align:center;`;
+    overlay.appendChild(label);
+  }
+  container.appendChild(overlay);
+}
+
+// ──────────────────────────────────────────────
+// Highlight neighbors
+// ──────────────────────────────────────────────
+
+function highlightNeighbors(nodeId) {
+  if (!graph) return;
+
+  const allNodes = graph.getNodes();
+  const allEdges = graph.getEdges();
+
+  // Find neighbors
+  const neighborIds = new Set([nodeId]);
+  const relatedEdgeIds = new Set();
+
+  for (const edge of allEdges) {
+    const model = edge.getModel();
+    if (model.source === nodeId || model.target === nodeId) {
+      neighborIds.add(model.source);
+      neighborIds.add(model.target);
+      relatedEdgeIds.add(model.id);
+    }
+  }
+
+  // Set states (one by one, to avoid compatibility issues with the batch API)
+  for (const node of allNodes) {
+    const model = node.getModel();
+    const isNeighbor = neighborIds.has(model.id);
+    const isSelf = model.id === nodeId;
+    try {
+      graph.setItemState(node, "dim", !isNeighbor);
+      graph.setItemState(node, "selected", isSelf);
+      graph.setItemState(node, "highlight", isNeighbor && !isSelf);
+    } catch(e) { /* ignore state-setting errors for individual nodes */ }
+  }
+
+  for (const edge of allEdges) {
+    const model = edge.getModel();
+    const isRelated = relatedEdgeIds.has(model.id);
+    try {
+      graph.setItemState(edge, "dim", !isRelated);
+      graph.setItemState(edge, "highlight", isRelated);
+    } catch(e) { /* ignore state-setting errors for individual edges */ }
+  }
+}
+
+function clearHighlight() {
+  if (!graph) return;
+  const allNodes = graph.getNodes();
+  const allEdges = graph.getEdges();
+  for (const node of allNodes) {
+    try {
+      graph.setItemState(node, "dim", false);
+      graph.setItemState(node, "selected", false);
+      graph.setItemState(node, "highlight", false);
+    } catch(e) { /* ignore */ }
+  }
+  for (const edge of allEdges) {
+    try {
+      graph.setItemState(edge, "dim", false);
+      graph.setItemState(edge, "highlight", false);
+      graph.setItemState(edge, "selected", false);
+    } catch(e) { /* ignore */ }
+  }
+}
+
+// ──────────────────────────────────────────────
+// Detail panel
+// ──────────────────────────────────────────────
+
+function showEdgeDetailPanel(model) {
+  const panel = document.getElementById("detail-panel");
+  const content = document.getElementById("dp-content");
+  const title = document.getElementById("dp-title");
+  const neighborsDiv = document.getElementById("dp-neighbors");
+
+  const edgeLabel = EDGE_LABELS[model.edgeType] || model.edgeType;
+  const sourceNode = rawData.nodes.find(n => n.id === model.source);
+  const targetNode = rawData.nodes.find(n => n.id === model.target);
+
+  title.textContent = `${edgeLabel}: ${sourceNode?.label || model.source} → ${targetNode?.label || model.target}`;
+
+  let html = "";
+
+  html += `<div class="dp-field">
+    <div class="dp-field-label">Relation type</div>
+    <div class="dp-field-value">${edgeLabel}</div>
+  </div>`;
+
+  html += `<div class="dp-field">
+    <div class="dp-field-label">Source node</div>
+    <div class="dp-field-value"><code>${model.source}</code></div>
+  </div>`;
+
+  html += `<div class="dp-field">
+    <div class="dp-field-label">Target node</div>
+    <div class="dp-field-value"><code>${model.target}</code></div>
+  </div>`;
+
+  if (model.desc) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Description</div>
+      <div class="dp-field-value">${model.desc}</div>
+    </div>`;
+  }
+
+  if (model.columns && model.columns.length > 0) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Column pairs (${model.columns.length})</div>
+      <div class="dp-field-value">`;
+    for (const col of model.columns) {
+      html += `<div style="margin-bottom:4px;padding:4px 8px;background:#f9fafb;border-radius:4px;font-size:11px;">
+        <code>${col.source_column || ''}</code>
+        <span style="color:#8b8ba7;margin:0 4px;">↔</span>
+        <code>${col.target_column || ''}</code>`;
+      if (col.difference) {
+        html += `<div style="color:#6b7280;margin-top:2px;">Difference: ${col.difference}</div>`;
+      }
+      html += `</div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  content.innerHTML = html;
+  neighborsDiv.innerHTML = "";
+  panel.classList.add("visible");
+  resizeCanvas();
+}
+
+function showDetailPanel(model) {
+  const panel = document.getElementById("detail-panel");
+  const content = document.getElementById("dp-content");
+  const title = document.getElementById("dp-title");
+  const neighborsDiv = document.getElementById("dp-neighbors");
+
+  title.textContent = model.label || model.id;
+
+  const typeLabels = {
+    table: "Table",
+    concept: "Business Concept",
+    column_concept: "Column Concept",
+    metric: "Metric",
+  };
+
+  const style = getNodeStyle(model.nodeType);
+  let html = "";
+
+  html += `<div class="dp-field">
+    <div class="dp-field-label">Type</div>
+    <div class="dp-field-value">
+      <span class="dp-badge" style="background:${style.fill};color:${style.textColor}">
+        ${typeLabels[model.nodeType] || model.nodeType}
+      </span>
+    </div>
+  </div>`;
+
+  html += `<div class="dp-field">
+    <div class="dp-field-label">ID</div>
+    <div class="dp-field-value"><code>${model.id}</code></div>
+  </div>`;
+
+  if (model.desc) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Description</div>
+      <div class="dp-field-value">${model.desc}</div>
+    </div>`;
+  }
+
+  if (model.category) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Metric category</div>
+      <div class="dp-field-value">${model.category}</div>
+    </div>`;
+  }
+
+  if (model.operator) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Operator</div>
+      <div class="dp-field-value"><code>${model.operator}</code></div>
+    </div>`;
+  }
+
+  if (model.logic) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Logic expression</div>
+      <div class="dp-field-value"><pre>${model.logic}</pre></div>
+    </div>`;
+  }
+
+  if (model.sql) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">SQL</div>
+      <div class="dp-field-value"><pre>${model.sql}</pre></div>
+    </div>`;
+  }
+
+  if (model.difference) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Difference description</div>
+      <div class="dp-field-value">${model.difference}</div>
+    </div>`;
+  }
+
+  if (model.columns) {
+    // For table, columns is a dict {colName: {desc, default}};
+    // for column_concept, columns is an array of strings ["table.col", ...]
+    if (Array.isArray(model.columns)) {
+      if (model.columns.length > 0) {
+        html += `<div class="dp-field">
+          <div class="dp-field-label">Related columns (${model.columns.length})</div>
+          <div class="dp-field-value" style="max-height:300px;overflow-y:auto;">`;
+        for (const colRef of model.columns) {
+          html += `<div style="margin-bottom:3px;padding:3px 8px;background:#f5f3ff;border-radius:4px;font-size:11px;">
+            <code style="font-weight:600;">${colRef}</code>
+          </div>`;
+        }
+        html += `</div></div>`;
+      }
+    } else {
+      const colKeys = Object.keys(model.columns);
+      if (colKeys.length > 0) {
+        html += `<div class="dp-field">
+          <div class="dp-field-label">Columns (${colKeys.length})</div>
+          <div class="dp-field-value" style="max-height:300px;overflow-y:auto;">`;
+        for (const colName of colKeys) {
+          const col = model.columns[colName];
+          html += `<div style="margin-bottom:3px;padding:3px 8px;background:#f9fafb;border-radius:4px;font-size:11px;">
+            <code style="font-weight:600;">${colName}</code>`;
+          if (col && col.desc) {
+            html += `<span style="color:#6b7280;margin-left:6px;">${col.desc}</span>`;
+          }
+          if (col && col.default !== undefined && col.default !== null) {
+            html += `<span style="color:#9ca3af;margin-left:6px;font-size:10px;">Default: ${col.default}</span>`;
+          }
+          html += `</div>`;
+        }
+        html += `</div></div>`;
+      }
+    }
+  }
+
+  if (model.tables && model.tables.length > 0) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Related tables (${model.tables.length})</div>
+      <div class="dp-field-value">`;
+    for (const tableId of model.tables) {
+      html += `<div style="margin-bottom:3px;padding:3px 8px;background:#fff7ed;border-radius:4px;font-size:11px;">
+        <code style="font-weight:600;">${tableId}</code>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  if (model.comparisons && model.comparisons.length > 0) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Structured comparisons (${model.comparisons.length})</div>
+      <div class="dp-field-value">`;
+    for (const comparison of model.comparisons) {
+      const dimension = comparison.dimension || "Unnamed dimension";
+      html += `<div style="margin-bottom:8px;padding:6px 8px;background:#fff7ed;border-radius:4px;font-size:11px;">
+        <div style="font-weight:700;color:#92400e;margin-bottom:4px;">${dimension}</div>`;
+      for (const [key, value] of Object.entries(comparison)) {
+        if (key === "dimension") continue;
+        html += `<div><code>${key}</code>: ${value}</div>`;
+      }
+      html += `</div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  if (model.decision_guide && Object.keys(model.decision_guide).length > 0) {
+    html += `<div class="dp-field">
+      <div class="dp-field-label">Table selection guide</div>
+      <div class="dp-field-value">`;
+    for (const [question, guidance] of Object.entries(model.decision_guide)) {
+      html += `<div style="margin-bottom:6px;padding:6px 8px;background:#fff7ed;border-radius:4px;font-size:11px;">
+        <div style="font-weight:700;color:#92400e;">${question}</div>
+        <div style="margin-top:2px;">${guidance}</div>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  content.innerHTML = html;
+
+  // Neighbor list
+  const neighbors = [];
+  for (const edge of rawData.edges) {
+    if (edge.source === model.id) {
+      const target = rawData.nodes.find(n => n.id === edge.target);
+      if (target) {
+        neighbors.push({
+          node: target,
+          direction: "out",
+          edgeType: edge.edgeType,
+        });
+      }
+    } else if (edge.target === model.id) {
+      const source = rawData.nodes.find(n => n.id === edge.source);
+      if (source) {
+        neighbors.push({
+          node: source,
+          direction: "in",
+          edgeType: edge.edgeType,
+        });
+      }
+    }
+  }
+
+  if (neighbors.length > 0) {
+    let nbHtml = '<div class="dp-neighbors-title">Related nodes (' + neighbors.length + ')</div>';
+    for (const nb of neighbors) {
+      const arrow = nb.direction === "out" ? "→" : "←";
+      const edgeLabel = EDGE_LABELS[nb.edgeType] || nb.edgeType;
+      const nbStyle = getNodeStyle(nb.node.nodeType);
+      nbHtml += `<div class="dp-neighbor-item" data-id="${nb.node.id}">
+        <span class="dp-neighbor-arrow">${arrow}</span>
+        <span class="legend-dot" style="background:${nbStyle.fill};width:8px;height:8px;"></span>
+        <span>${nb.node.label}</span>
+        <span class="dp-neighbor-type">${edgeLabel}</span>
+      </div>`;
+    }
+    neighborsDiv.innerHTML = nbHtml;
+
+    // Click a neighbor to jump to it
+    neighborsDiv.querySelectorAll(".dp-neighbor-item").forEach(el => {
+      el.addEventListener("click", () => {
+        const targetId = el.getAttribute("data-id");
+        const item = graph.findById(targetId);
+        if (item) {
+          graph.focusItem(item, true, { easing: "easeCubic", duration: 300 });
+          setTimeout(() => {
+            const model = item.getModel();
+            showDetailPanel(model);
+            highlightNeighbors(targetId);
+          }, 350);
+        }
+      });
+    });
+  } else {
+    neighborsDiv.innerHTML = "";
+  }
+
+  panel.classList.add("visible");
+  resizeCanvas();
+}
+
+function hideDetailPanel() {
+  document.getElementById("detail-panel").classList.remove("visible");
+  resizeCanvas();
+}
+
+function resizeCanvas() {
+  if (!graph) return;
+  const container = document.getElementById("graph-container");
+  graph.changeSize(container.clientWidth, container.clientHeight);
+  graph.fitView(20);
+}
+
+// ──────────────────────────────────────────────
+// Event bindings
+// ──────────────────────────────────────────────
+
+document.getElementById("dp-close").addEventListener("click", () => {
+  hideDetailPanel();
+  clearHighlight();
+});
+
+document.getElementById("yaml-select").addEventListener("change", async () => {
+  document.getElementById("loading").style.display = "block";
+  await loadData();
+});
+
+document.getElementById("layout-select").addEventListener("change", () => {
+  renderGraph();
+});
+
+document.getElementById("filter-select").addEventListener("change", () => {
+  renderGraph();
+});
+
+// Search (with debounce)
+let searchTimer = null;
+document.getElementById("search-input").addEventListener("input", () => {
+  const clearBtn = document.getElementById("search-clear");
+  clearBtn.classList.toggle("visible", document.getElementById("search-input").value.length > 0);
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    renderGraph();
+  }, 300);
+});
+
+document.getElementById("search-clear").addEventListener("click", () => {
+  document.getElementById("search-input").value = "";
+  document.getElementById("search-clear").classList.remove("visible");
+  renderGraph();
+  document.getElementById("search-input").focus();
+});
+
+// Keyboard shortcuts: / focuses search, Escape clears search
+document.addEventListener("keydown", (e) => {
+  const searchInput = document.getElementById("search-input");
+  if (e.key === "/" && document.activeElement !== searchInput &&
+      document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "SELECT") {
+    e.preventDefault();
+    searchInput.focus();
+  } else if (e.key === "Escape" && document.activeElement === searchInput) {
+    searchInput.value = "";
+    document.getElementById("search-clear").classList.remove("visible");
+    renderGraph();
+    searchInput.blur();
+  }
+});
+
+document.getElementById("btn-fit").addEventListener("click", () => {
+  if (graph) graph.fitView(20);
+});
+
+document.getElementById("btn-reload").addEventListener("click", async () => {
+  document.getElementById("loading").style.display = "block";
+  await loadData();
+});
+
+// Window resize
+window.addEventListener("resize", () => {
+  if (!graph) return;
+  const container = document.getElementById("graph-container");
+  graph.changeSize(container.clientWidth, container.clientHeight);
+  graph.fitView(20);
+});
+
+// ──────────────────────────────────────────────
+// Startup
+// ──────────────────────────────────────────────
+
+(async () => {
+  try {
+    await loadYamlList();
+    await loadData();
+  } catch (err) {
+    document.getElementById("loading").textContent = "Failed to load: " + err.message;
+    console.error(err);
+  }
+})();
+</script>
+
+</body>
+</html>

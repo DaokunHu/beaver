@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_3183",
+  "question": "For each space unit, list the space unit name and the number of rooms assigned to it, but only include those space units where the number of rooms with an access level of at least 1 is greater than the average number of such rooms per space unit. Do not return any rounded answers.",
+  "setting": 0,
+  "answer": "The SQL has been submitted successfully.\n\n## Final Answer\n\n**Query logic:**\n1. **CTE `su_rooms`**: Joins `SPACE_UNIT` to `ZPM_ROOMS_LOAD` on `SPACE_UNIT_CODE` (the only room feed carrying both room-level `ACCESS_LEVEL` and space-unit linkage), grouping by space unit name to compute:\n   - `room_count` — total rooms assigned to the space unit (`COUNT(*)`)\n   - `al_room_count` — rooms with access level ≥ 1 (`SUM(CASE WHEN ACCESS_LEVEL >= 1 ...)`)\n2. **Outer query**: Keeps only space units whose `al_room_count` exceeds the **average of the per-space-unit counts** (two-level aggregation, matching the dw_2616 precedent pattern), returning exactly the two requested columns — space unit name and number of rooms — with no rounding applied anywhere.\n\n**Note:** The MySQL connection was unavailable during this session (persistent `Access denied` errors), so execution verification could not be performed; the query was built entirely on the semantic-network evidence — 5 precedent metrics (dw_3916, dw_4033, dw_4162, dw_4271, dw_4773) all use the identical `SPACE_UNIT ⋈ ZPM_ROOMS_LOAD ON SPACE_UNIT_CODE` join path for access-level room counting per space unit, and the `column_concept_access_level` decision guide explicitly routes space-unit-linked access-level analysis to `ZPM_ROOMS_LOAD.ACCESS_LEVEL`.",
+  "error": "",
+  "elapsed_seconds": 495.7,
+  "session_id": "run_dw_3183_1794201009",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261109_131009_run_dw_3183_1794201009_rendered.log"
+}

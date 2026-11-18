@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_140",
+  "question": "For each department and academic year where the subject enrollment number is greater than 10 and the department is Mathematics, provide the number of unique subjects, the minimum total units offered, and the latest term end date for those subjects. Do not return any rounded answers.",
+  "setting": 0,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the solution:**\n\nThe query follows the exact join pattern established by same-shape precedent metrics (dw_4515, dw_1023):\n\n- **COURSE_CATALOG_SUBJECT_OFFERED** (`c`) — provides department attribution (`DEPARTMENT_NAME = 'Mathematics'`) and subject identity (`SUBJECT_ID`)\n- **ACADEMIC_TERMS** (`t`) — joined on `TERM_CODE`, provides `ACADEMIC_YEAR` (grouping key) and `TERM_END_DATE` (for the \"latest term end date\" = `MAX`)\n- **SUBJECT_SUMMARY** (`s`) — joined on `TERM_CODE + SUBJECT_ID`, provides the official `SUBJECT_ENROLLMENT_NUMBER` filter (> 10, as mandated by the enrollment-measures decision guide) and `TOTAL_UNITS` (for `MIN`)\n\nOutput columns, in the asked order: department name, academic year, number of unique subjects (`COUNT(DISTINCT c.SUBJECT_ID)` — distinct protects against catalog section-level fan-out), minimum total units offered, and latest term end date. No rounding is applied anywhere.\n\nNote: live database verification was not possible — every `mysql_query` attempt (including `SELECT 1`) failed with a server-side authentication error (`1045 Access denied for user 'root'@'localhost'`), so the query was validated purely against the semantic network's documented column definitions, join keys, and precedent metric SQL.",
+  "error": "",
+  "elapsed_seconds": 174.3,
+  "session_id": "run_dw_140_1794220516",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261109_183516_run_dw_140_1794220516_rendered.log"
+}

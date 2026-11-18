@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_2694",
+  "question": "For each subject offered in the 2012 summer term by the Harvard Cross-Enrollment Program, provide the subject key, subject title, department name, the number of subject offerings, the total number of units for those offerings, and the total number of enrolled students in those offerings. Do not return any rounded answers.",
+  "setting": 0,
+  "answer": "The final SQL has been submitted. \n\n**Summary**: The query joins `SUBJECT_OFFERED` (section-level, providing `SUBJECT_KEY`, `SUBJECT_TITLE`, `OFFER_DEPT_NAME`, and `NUM_ENROLLED_STUDENTS`) with its subject-level parent `SUBJECT_OFFERED_SUMMARY` via `COMPOSITE_SUBJECT_KEY` (providing `TOTAL_UNITS`, which the section table lacks), filtered to `TERM_CODE = '2012SU'` (2012 summer term) and `OFFER_DEPT_NAME = 'Harvard Cross-Enrollment Prog'` (the exact literal value documented in the column definition and used in precedent metric dw_3530). It groups per subject key and aggregates the number of offerings, total units, and total enrolled students — with no rounding applied.\n\nNote: live database verification was not possible because every `mysql_query` attempt failed with a server-side authentication error (`Access denied for user 'root'@'localhost'`), so the query was constructed and validated strictly against the semantic-network evidence (table column definitions, the documented parent-child join, and the dw_3530/dw_3632/dw_4184 precedent SQLs for the same term and department).",
+  "error": "",
+  "elapsed_seconds": 893.9,
+  "session_id": "run_dw_2694_1794208138",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261109_150858_run_dw_2694_1794208138_rendered.log"
+}

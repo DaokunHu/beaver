@@ -18,7 +18,8 @@ If you find our data, code, or the paper helpful, please cite the paper:
 ## Repository Structure
 
 ```
-├── .env                                 # Credential file (API keys + MySQL database password)
+├── .env                                 # Credential file (API keys + MySQL database password); git-ignored
+├── .env.example                         # Template for `.env` (all keys, values redacted)
 ├── data/                                # Dataset files (e.g. metadata, questions, tables)
 │   ├── dw/                              # `dw` dataset
 │   │   ├── example.json                 # Few-shot examples
@@ -38,19 +39,26 @@ If you find our data, code, or the paper helpful, please cite the paper:
 
 ### Credentials (`.env` file)
 
-All API keys and MySQL credentials are managed through a single `.env` file at the root directory.
+All API keys and MySQL credentials are managed through a single `.env` file at the root directory. A template listing every key (with the values redacted) is committed as `.env.example`:
 
-The `.env` file should contain:
+```bash
+cp .env.example .env    # then fill in your own keys / endpoints / models
+```
+
+The minimally required keys are:
 ```
 # LLM API Keys
-OPENAI_API_KEY=xxx
-OPENROUTER_API_KEY=xxx
+OPENAI_API_KEY=<your-openai-api-key>
+OPENROUTER_API_KEY=<your-openrouter-api-key>
 
 # MySQL Credentials (shared across all databases)
 MYSQL_HOST=localhost
+MYSQL_PORT=3306
 MYSQL_USER=root
-MYSQL_PASSWORD=xxx
+MYSQL_PASSWORD=<your-mysql-password>
 ```
+
+`.env.example` additionally documents the `LLM_*` / `EMBEDDING_*` keys used by [Durian](eval/durian/README.md) and the optional backend-specific keys (`GEMINI_API_KEY`, `AZURE_*`, ...). `.env` itself is git-ignored — never commit real credentials.
 
 ### Data Pre-processing
 Our [gated dataset](https://huggingface.co/collections/beaverbench/beaver-dataset) is hoted on Hugging Face. You must be **authenticated** to access it, which means logging in through your CLI.

@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_2878",
+  "question": "For each department offering a course, what is the maximum average enrollment among all terms for courses that have at least one associated TIP material and where the total units for the course are greater than 0? Do not return any rounded answers.",
+  "setting": 1,
+  "answer": "The SQL has been submitted successfully.\n\n**Summary of the solution:**\n\nThe query answers: *For each department offering a course, the maximum average enrollment among all terms for courses with at least one TIP material and total units > 0.*\n\n**Approach (two-level aggregation, per the dw_1766 gold precedent):**\n\n1. **Inner CTE** — joins the three gold tables on the documented `SUBJECT_ID` join edges:\n   - `LIBRARY_SUBJECT_OFFERED` → provides the department (`OFFER_DEPT_NAME`)\n   - `TIP_DETAIL` → provides the \"at least one TIP material\" filter (`RECORD_COUNT >= 1`) via INNER JOIN existence semantics\n   - `SUBJECT_OFFERED_SUMMARY` → provides the term (`TERM_CODE`), enrollment measure (`NUM_ENROLLED_STUDENTS`), and units filter (`TOTAL_UNITS > 0`)\n   - Computes `AVG(NUM_ENROLLED_STUDENTS)` per **department + term**\n\n2. **Outer query** — takes `MAX()` of the per-term averages per department, giving the highest average enrollment across all terms.\n\nNo rounding is applied anywhere, per the question's requirement. The SELECT list contains exactly the two requested columns: department name and maximum average enrollment.\n\n*Note: live execution verification was not possible because the MySQL connection returned a persistent authentication error (`Access denied for user 'root'@'localhost'`) on every attempt; the query was instead validated against the retrieved column definitions, documented join keys, and same-shape gold-SQL precedents (dw_1766, dw_1973) from the semantic network.*",
+  "error": "",
+  "elapsed_seconds": 350.6,
+  "session_id": "run_dw_2878_1794303516",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_173836_run_dw_2878_1794303516_rendered.log"
+}

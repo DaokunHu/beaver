@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_3183",
+  "question": "For each space unit, list the space unit name and the number of rooms assigned to it, but only include those space units where the number of rooms with an access level of at least 1 is greater than the average number of such rooms per space unit. Do not return any rounded answers.",
+  "setting": 1,
+  "answer": "The SQL has been submitted successfully.\n\n## Summary\n\n**Question**: For each space unit, list the space unit name and the number of rooms assigned, keeping only space units whose count of rooms with access level ≥ 1 exceeds the average such count per space unit (no rounding).\n\n**Final query logic**:\n1. **Join**: `SPACE_UNIT` ⨝ `ZPM_ROOMS_LOAD` on `SPACE_UNIT_CODE` — the only room table carrying both `ACCESS_LEVEL` and a space-unit link (SPACE_DETAIL lacks access level; FCLT_ROOMS lacks the space-unit code).\n2. **Filter**: `ACCESS_LEVEL >= 1` (\"at least 1\").\n3. **Aggregate**: `COUNT(BUILDING_ROOM)` grouped by `SPACE_UNIT` — the number of rooms assigned.\n4. **Two-level HAVING**: a scalar subquery computes the inner per-space-unit counts (`GROUP BY SPACE_UNIT_CODE`) and takes their `AVG` — the average number of qualifying rooms per space unit — with no rounding applied anywhere.\n5. **SELECT list**: exactly the two requested columns, in order — space unit name (`SPACE_UNIT`) and number of rooms assigned.\n\nNote: live database verification was not possible because `mysql_query` repeatedly failed with an infrastructure authentication error (`Access denied for user 'root'@'localhost'`), so the query was validated against the semantic network's documented column definitions, join keys, decision guides, and 5 same-shape metric precedents (dw_3916, dw_4033, dw_4271, dw_4773, dw_4162), all of which confirm the SPACE_UNIT_CODE join and ACCESS_LEVEL filter pattern.",
+  "error": "",
+  "elapsed_seconds": 175.4,
+  "session_id": "run_dw_3183_1794295671",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_152751_run_dw_3183_1794295671_rendered.log"
+}

@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_458",
+  "question": "For each academic building (excluding \"Ashdown House\"), what is the coefficient of variation (using STDDEV only and never STDDEV_POP) of the area of its rooms, along with the building's full name and postal code, and only include those buildings where the coefficient of variation (using STDDEV only and never STDDEV_POP) is greater than the average coefficient of variation (using STDDEV only and never STDDEV_POP) across all academic buildings? Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the solution:**\n\n- **Tables**: `FCLT_ROOMS` (room `AREA` in m²), `FCLT_BUILDING` (`BUILDING_TYPE = 'ACADEMIC'`, `BUILDING_NAME <> 'ASHDOWN HOUSE'`, `BUILDING_NAME_LONG`), `FCLT_BUILDING_ADDRESS` (`POSTAL_CODE`), joined on `FCLT_BUILDING_KEY`.\n- **Two-level aggregation**: the inner CTE computes per-building coefficient of variation as `STDDEV(AREA)/NULLIF(AVG(AREA),0)` (bare `STDDEV`, never `STDDEV_POP`, per the tip and the dw_4640 precedent), with `HAVING AVG(AREA) > 0` to guard division; the outer query filters buildings whose CV exceeds `AVG(CV)` across the same academic-building population (following the dw_126 \"greater than the average\" CTE pattern).\n- **Output columns** (exactly as asked, in hint order): building full name, postal code, coefficient of variation — unrounded, ordered by CV descending.\n- **Caveat**: database access was denied during this session (`1045 Access denied`), so execution-based verification was not possible; the query was validated against the semantic network's documented join keys, column semantics, concept decision guides, and the provided hint decomposition.",
+  "error": "",
+  "elapsed_seconds": 294.4,
+  "session_id": "run_dw_458_1794284724",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_122524_run_dw_458_1794284724_rendered.log"
+}

@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_2933",
+  "question": "For each organization, show the organization name, the number of associated space units, and the average space unit key value for that organization. Do not return any rounded answers.",
+  "setting": 1,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the solution:**\n\n```sql\nSELECT T1.ORGANIZATION_NAME,\n       COUNT(T3.SPACE_UNIT_KEY) AS NUM_SPACE_UNITS,\n       AVG(T3.SPACE_UNIT_KEY) AS AVG_SPACE_UNIT_KEY\nFROM FCLT_ORGANIZATION T1\nINNER JOIN FCLT_ORG_DLC_KEY T2 ON T1.DLC_KEY = T2.DLC_KEY\nINNER JOIN SPACE_UNIT T3 ON T1.DLC_KEY = T3.DLC_KEY\nGROUP BY T1.ORGANIZATION_NAME\n```\n\n**Key decisions:**\n1. **Exactly 3 output columns** in the asked order: organization name, count of associated space units, average space unit key — no rounding applied anywhere.\n2. **FCLT_ORGANIZATION** provides the canonical `ORGANIZATION_NAME` (its definition explicitly states it is \"used for organization-name reporting\"); it was chosen over FAC_ORGANIZATION because only FCLT_ORGANIZATION carries `DLC_KEY`.\n3. **FCLT_ORG_DLC_KEY** is joined on `DLC_KEY` per the documented join path — it serves as the DLC-assignment bridge/filter, consistent with 8 existing metric precedents (e.g., dw_1833, dw_3235).\n4. **SPACE_UNIT** (not the subset SPACE_UNIT2) is joined via the shared `DLC_KEY`, following precedents like dw_3919 (\"department and space unit share the same DLC key\"); `SPACE_UNIT_KEY` is the numeric surrogate key used for both COUNT and AVG.\n5. Note: live `mysql_query` verification was blocked by a server-side authentication error (\"Access denied for user 'root'@'localhost'\"), so the query was validated against the retrieved column definitions, documented join keys, and metric precedents in the semantic network.",
+  "error": "",
+  "elapsed_seconds": 157.3,
+  "session_id": "run_dw_2933_1794307558",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_184558_run_dw_2933_1794307558_rendered.log"
+}

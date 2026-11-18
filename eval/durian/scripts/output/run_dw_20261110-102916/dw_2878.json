@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_2878",
+  "question": "For each department offering a course, what is the maximum average enrollment among all terms for courses that have at least one associated TIP material and where the total units for the course are greater than 0? Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the solution:**\n\nThe question asks: *For each department offering a course, the maximum average enrollment among all terms, for courses with at least one TIP material and total units > 0.*\n\nThis is a **two-level aggregation** (\"max of per-term averages\"):\n\n1. **Inner query** — joins the three gold tables on `SUBJECT_ID`:\n   - `LIBRARY_SUBJECT_OFFERED` → provides the department (`OFFER_DEPT_NAME`)\n   - `TIP_DETAIL` → filters to courses with at least one TIP material (`RECORD_COUNT >= 1`)\n   - `SUBJECT_OFFERED_SUMMARY` → provides per-term enrollment (`NUM_ENROLLED_STUDENTS`), the term scope (`TERM_CODE`), and the units filter (`TOTAL_UNITS > 0`)\n   - Groups by **department + term** and computes `AVG(NUM_ENROLLED_STUDENTS)` per term.\n\n2. **Outer query** — groups by department only and takes `MAX(avg_enrollment)` across all terms, returning unrounded values as required.\n\nNote: direct database verification was not possible because `mysql_query` consistently returned an authentication error (`Access denied for user 'root'@'localhost'`) — an infrastructure issue, not a query defect. The SQL was constructed strictly from the semantic-network evidence (column definitions, join edges, decision guides) and the provided hint decomposition, which validated the same join path and filters.",
+  "error": "",
+  "elapsed_seconds": 160.6,
+  "session_id": "run_dw_2878_1794282885",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_115445_run_dw_2878_1794282885_rendered.log"
+}

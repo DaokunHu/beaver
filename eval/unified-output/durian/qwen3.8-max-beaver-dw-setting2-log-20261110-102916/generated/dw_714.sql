@@ -1,0 +1,33 @@
+WITH student_counts AS (
+  SELECT d.DEPARTMENT_NAME, msd.STUDENT_YEAR, COUNT(*) AS num_students
+  FROM SIS_DEPARTMENT d
+  JOIN MIT_STUDENT_DIRECTORY msd ON d.DEPARTMENT_CODE = msd.DEPARTMENT
+  WHERE d.IS_DEGREE_GRANTING = 'Y' AND d.DEPARTMENT_NAME <> 'Biology'
+  GROUP BY d.DEPARTMENT_NAME, msd.STUDENT_YEAR
+),
+dept_stats AS (
+  SELECT DEPARTMENT_NAME,
+         VARIANCE(num_students) AS variance_num_students,
+         STDDEV(num_students) AS stddev_num_students
+  FROM student_counts
+  GROUP BY DEPARTMENT_NAME
+),
+math_stats AS (
+  SELECT cso.DEPARTMENT_NAME,
+         at.ACADEMIC_YEAR,
+         COUNT(DISTINCT ss.SUBJECT_ID) AS num_unique_subjects,
+         MIN(ss.TOTAL_UNITS) AS min_total_units
+  FROM COURSE_CATALOG_SUBJECT_OFFERED cso
+  JOIN ACADEMIC_TERMS at ON cso.EFFECTIVE_TERM_CODE = at.TERM_CODE
+  JOIN SUBJECT_SUMMARY ss ON at.TERM_CODE = ss.TERM_CODE AND cso.DEPARTMENT_NAME = ss.DEPARTMENT_NAME
+  WHERE cso.DEPARTMENT_NAME = 'Mathematics' AND ss.SUBJECT_ENROLLMENT_NUMBER > 10
+  GROUP BY cso.DEPARTMENT_NAME, at.ACADEMIC_YEAR
+)
+SELECT ds.DEPARTMENT_NAME,
+       ds.variance_num_students,
+       ds.stddev_num_students,
+       ms.ACADEMIC_YEAR,
+       ms.num_unique_subjects,
+       ms.min_total_units
+FROM dept_stats ds
+JOIN math_stats ms ON ds.DEPARTMENT_NAME = ms.DEPARTMENT_NAME;

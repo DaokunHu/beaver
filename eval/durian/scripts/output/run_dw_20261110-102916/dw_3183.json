@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_3183",
+  "question": "For each space unit, list the space unit name and the number of rooms assigned to it, but only include those space units where the number of rooms with an access level of at least 1 is greater than the average number of such rooms per space unit. Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the solution:**\n\n```sql\nSELECT SPACE_UNIT, room_count\nFROM (\n    SELECT su.SPACE_UNIT,\n           COUNT(zr.BUILDING_ROOM) AS room_count,\n           AVG(COUNT(zr.BUILDING_ROOM)) OVER () AS avg_room_count\n    FROM SPACE_UNIT su\n    JOIN ZPM_ROOMS_LOAD zr ON su.SPACE_UNIT_CODE = zr.SPACE_UNIT_CODE\n    WHERE zr.ACCESS_LEVEL >= 1\n    GROUP BY su.SPACE_UNIT\n) t\nWHERE room_count > avg_room_count\n```\n\n**Key decisions:**\n1. **Tables**: `SPACE_UNIT` ⋈ `ZPM_ROOMS_LOAD` on `SPACE_UNIT_CODE` — ZPM_ROOMS_LOAD is the only room table carrying both a space-unit join key and room-level `ACCESS_LEVEL` (SPACE_DETAIL has no ACCESS_LEVEL column), confirmed by the concept decision guide and three metric precedents (dw_3916, dw_4162, dw_4271).\n2. **Filter**: `ACCESS_LEVEL >= 1` applied at row level before counting, so only qualifying rooms contribute to both each unit's count and the overall average.\n3. **Threshold semantics**: the average is \"the average number of such rooms per space unit\" — computed as `AVG(COUNT(...)) OVER ()` over the per-unit grouped counts (average of per-unit counts, not a row-level average), and the comparison `room_count > avg_room_count` uses exact unrounded values.\n4. **SELECT list**: exactly the two requested columns in order — space unit name (`SPACE_UNIT`) and number of rooms (`room_count`).",
+  "error": "",
+  "elapsed_seconds": 139.0,
+  "session_id": "run_dw_3183_1794279488",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_105808_run_dw_3183_1794279488_rendered.log"
+}

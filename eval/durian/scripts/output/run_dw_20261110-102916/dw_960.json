@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_960",
+  "question": "For the top 10 departments by number of subjects offered in the 2022 academic year (excluding the Political Science department and only including departments that grant degrees), and also excluding the Biology department, provide each department's name, the count of subjects offered, and the variance of the total units for subjects offered by that department in 2022. Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The SQL has been submitted successfully.\n\n**Summary of the final query:**\n- **Tables**: `COURSE_CATALOG_SUBJECT_OFFERED` (subject counts, 2022 filter) ⋈ `SIS_DEPARTMENT` (department name, degree-granting flag, exclusions) ⋈ `SUBJECT_OFFERED_SUMMARY` (TOTAL_UNITS for variance), joined via `DEPARTMENT_CODE` and `DEPARTMENT_CODE = OFFER_DEPT_CODE`.\n- **Filters**: `ACADEMIC_YEAR = 2022`, `IS_DEGREE_GRANTING = 'Y'`, excluding Political Science (`DEPARTMENT_CODE <> '17'`) and Biology (`DEPARTMENT_CODE <> '7'`).\n- **Output**: department name, count of subjects offered, and unrounded `VARIANCE(TOTAL_UNITS)` — exactly the three requested columns in order — for the top 10 departments by subject count (`ORDER BY subject_count DESC LIMIT 10`).\n\nThis follows the two verified precedent patterns in the semantic network (dw_2151 for the degree-granting/Biology-exclusion variance shape and dw_1474 for the top-10/Political-Science-exclusion shape with the OFFER_DEPT_CODE join). Note: live database verification was not possible in this session due to an authentication error (\"Access denied for user 'root'@'localhost'\"), so the query was validated against the retrieved schema definitions and precedent metric SQL instead.",
+  "error": "",
+  "elapsed_seconds": 193.8,
+  "session_id": "run_dw_960_1794280213",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_111013_run_dw_960_1794280213_rendered.log"
+}

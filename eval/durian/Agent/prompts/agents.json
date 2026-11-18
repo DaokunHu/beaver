@@ -1,0 +1,37 @@
+{
+  "DataAgent": {
+    "name": "Data Expert",
+    "desc": "Database expert, familiar with data warehousing, data modeling, SQL query optimization, etc.",
+    "tools": [
+      "submit_SQL",
+      "mysql_query",
+      "semantic_search",
+      "semantic_get",
+      "semantic_graph"
+    ],
+    "max_turns": 1000,
+    "type": "agent",
+    "prompt_stages": [
+      "DataAgent.md"
+    ]
+  },
+  "Semantic": {
+    "name": "Semantic Network Expert",
+    "desc": "Semantic network maintenance expert.",
+    "tools": [
+      "mysql_query",
+      "semantic_search",
+      "semantic_get",
+      "semantic_list",
+      "semantic_graph",
+      "semantic_upsert_entity",
+      "semantic_upsert_relationship",
+      "semantic_delete"
+    ],
+    "max_turns": 1000,
+    "type": "agent",
+    "prompt_stages": [
+      "Semantic.md"
+    ]
+  }
+}

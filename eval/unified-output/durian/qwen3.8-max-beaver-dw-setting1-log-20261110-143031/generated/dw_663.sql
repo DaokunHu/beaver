@@ -1,0 +1,25 @@
+WITH dept_cv AS (
+    SELECT c.DEPARTMENT_NAME,
+           STDDEV(c.TOTAL_UNITS) / NULLIF(AVG(c.TOTAL_UNITS), 0) AS coefficient_of_variation
+    FROM COURSE_CATALOG_SUBJECT_OFFERED c
+    JOIN ACADEMIC_TERMS t
+      ON t.TERM_CODE = c.EFFECTIVE_TERM_CODE
+    WHERE t.IS_REGULAR_TERM = 'Y'
+      AND c.DEPARTMENT_NAME <> 'Mathematics'
+    GROUP BY c.DEPARTMENT_NAME
+)
+SELECT p.MIT_ID,
+       p.FULL_NAME,
+       d.DEPARTMENT_NAME,
+       d.STUDENT_YEAR,
+       SUM(p.MIT_ID) OVER (PARTITION BY d.STUDENT_YEAR ORDER BY p.MIT_ID) AS running_sum_mit_id,
+       cv.coefficient_of_variation
+FROM SE_PERSON p
+JOIN MIT_STUDENT_DIRECTORY d
+  ON d.FULL_NAME = p.FULL_NAME
+LEFT JOIN dept_cv cv
+  ON cv.DEPARTMENT_NAME = d.DEPARTMENT_NAME
+WHERE p.EMPLOYEE_TYPE = 'Student'
+  AND d.DEPARTMENT = '6'
+  AND d.DEPARTMENT_NAME = 'Electrical Eng & Computer Sci'
+ORDER BY p.MIT_ID;

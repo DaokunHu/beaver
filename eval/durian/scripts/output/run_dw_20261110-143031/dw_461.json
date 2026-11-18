@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_461",
+  "question": "For each department that is degree granting, has a department budget code greater than 100000, is not the Mathematics department, and is not the Physics department, give the department name and the total clearing cost collector, but only include those departments where the total clearing cost collector is greater than the average clearing cost collector across all such departments. Do not return any rounded answers.",
+  "setting": 1,
+  "answer": "The SQL has been submitted successfully.\n\n**Final query summary:**\n- **Join**: `SIS_DEPARTMENT` ⋈ `SIS_ADMIN_DEPARTMENT` on `DEPARTMENT_CODE = SIS_ADMIN_DEPARTMENT_CODE` (documented join path, confirmed by precedent metric dw_2224).\n- **Filters**: `IS_DEGREE_GRANTING = 'Y'`, `DEPT_BUDGET_CODE > 100000`, excludes Mathematics by name (`DEPARTMENT_NAME != 'Mathematics'`) and Physics by course code (`DEPARTMENT_CODE != '8'`, mirroring the precedent's `!= '18'` convention for Mathematics).\n- **Output**: `DEPARTMENT_NAME` and `SUM(CLEARING_COST_COLLECTOR)` per department — exactly the two requested columns in order.\n- **Threshold**: `HAVING SUM(...) >` a scalar subquery computing the row-level `AVG(CLEARING_COST_COLLECTOR)` over the identical filtered joined population (\"across all such departments\"), following the dw_2224 precedent's row-level average convention. No rounding applied.\n\nNote: direct data verification via `mysql_query` was not possible in this session (the database returned an authentication error: \"Access denied for user 'root'@'localhost'\"), so the query was validated against the semantic network's column definitions, join documentation, and the same-shape precedent metric SQL instead.",
+  "error": "",
+  "elapsed_seconds": 120.0,
+  "session_id": "run_dw_461_1794304059",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_174739_run_dw_461_1794304059_rendered.log"
+}

@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_1414",
+  "question": "For each degree-granting department with a department budget code greater than 100000, excluding the Mathematics and Physics departments, where the total clearing cost collector is greater than the average clearing cost collector across all such departments, provide the department name, the total clearing cost collector, and the department's school name. List the results ordered by department name and total clearing cost collector descending. Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The final SQL has been submitted successfully.\n\n**Summary of the query:**\n1. **Inner CTE**: Joins `SIS_DEPARTMENT` to `SIS_ADMIN_DEPARTMENT` on `DEPARTMENT_CODE = SIS_ADMIN_DEPARTMENT_CODE`, applies the filters (degree-granting = 'Y', budget code > 100000, excludes Mathematics by name and Physics by department code '8'), and computes `SUM(CLEARING_COST_COLLECTOR)` per department name and school name.\n2. **Outer query**: Keeps only departments whose total clearing cost collector exceeds the average of the per-department totals (two-level aggregation, matching the hint decomposition), and returns exactly the three requested columns — department name, total clearing cost collector, school name — ordered by department name ascending and total clearing cost collector descending, with no rounding applied.\n\nNote: live database verification via `mysql_query` was not possible (all connection attempts returned \"Access denied\"), so the query was validated against the semantic network definitions (column existence, join path documented in `concept_department_dimension`, and the precedent metric `dw_2224`) and the provided hint decomposition.",
+  "error": "",
+  "elapsed_seconds": 71.0,
+  "session_id": "run_dw_1414_1794279345",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_105545_run_dw_1414_1794279345_rendered.log"
+}

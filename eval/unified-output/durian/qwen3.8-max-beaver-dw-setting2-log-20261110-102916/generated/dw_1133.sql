@@ -1,0 +1,35 @@
+WITH base AS (
+    SELECT d.DEPARTMENT_NAME,
+           c.GRADE_TYPE,
+           COUNT(c.SUBJECT_ID) AS subject_count,
+           MIN(c.TOTAL_UNITS) AS min_total_units
+    FROM SIS_DEPARTMENT d
+    JOIN COURSE_CATALOG_SUBJECT_OFFERED c
+      ON d.DEPARTMENT_CODE = c.DEPARTMENT_CODE
+    WHERE c.IS_OFFERED_THIS_YEAR = 'Y'
+      AND c.GRADE_TYPE = 'L'
+      AND d.DEPARTMENT_NAME = 'Mathematics'
+      AND d.DEPARTMENT_CODE = '18'
+    GROUP BY d.DEPARTMENT_NAME, c.GRADE_TYPE
+),
+top10_2022 AS (
+    SELECT sd.DEPARTMENT_NAME,
+           COUNT(cc.SUBJECT_ID) AS subject_count_2022
+    FROM SIS_DEPARTMENT sd
+    JOIN COURSE_CATALOG_SUBJECT_OFFERED cc
+      ON sd.DEPARTMENT_CODE = cc.DEPARTMENT_CODE
+    WHERE cc.ACADEMIC_YEAR = 2022
+      AND sd.IS_DEGREE_GRANTING = 'Y'
+      AND sd.DEPARTMENT_CODE <> '17'
+    GROUP BY sd.DEPARTMENT_NAME
+    ORDER BY subject_count_2022 DESC
+    LIMIT 10
+)
+SELECT b.DEPARTMENT_NAME,
+       b.GRADE_TYPE,
+       b.subject_count,
+       b.min_total_units,
+       t.subject_count_2022
+FROM base b
+LEFT JOIN top10_2022 t
+  ON b.DEPARTMENT_NAME = t.DEPARTMENT_NAME

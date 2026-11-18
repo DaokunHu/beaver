@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_2933",
+  "question": "For each organization, show the organization name, the number of associated space units, and the average space unit key value for that organization. Do not return any rounded answers.",
+  "setting": 2,
+  "answer": "The final SQL has been submitted successfully.\n\n**Final Query:**\n```sql\nSELECT fo.ORGANIZATION_NAME,\n       COUNT(su.SPACE_UNIT_KEY) AS space_unit_count,\n       AVG(su.SPACE_UNIT_KEY) AS avg_space_unit_key\nFROM FCLT_ORG_DLC_KEY fok\nJOIN FCLT_ORGANIZATION fo ON fok.DLC_KEY = fo.DLC_KEY\nJOIN SPACE_UNIT su ON fo.DLC_KEY = su.DLC_KEY\nGROUP BY fo.ORGANIZATION_NAME\n```\n\n**Explanation:**\n- **Join path** (per hints and semantic graph): `FCLT_ORG_DLC_KEY` (the DLC-assignment bridge) → `FCLT_ORGANIZATION` on `DLC_KEY` → `SPACE_UNIT` on `DLC_KEY`, associating each organization with its space units through the shared DLC key.\n- **Output columns** (exactly as asked, in order): organization name (`ORGANIZATION_NAME`), number of associated space units (`COUNT(SPACE_UNIT_KEY)`), and the average space unit key value (`AVG(SPACE_UNIT_KEY)`).\n- **No rounding**: bare `AVG()` is used without `ROUND()`, satisfying the \"do not return any rounded answers\" requirement.\n- **Granularity**: grouped by `ORGANIZATION_NAME` only, per the question's \"for each organization\" wording; no LIMIT since the question asks for all organizations (the hint's LIMIT 10 was only an intermediate decomposition step).",
+  "error": "",
+  "elapsed_seconds": 149.0,
+  "session_id": "run_dw_2933_1794284040",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261110_121400_run_dw_2933_1794284040_rendered.log"
+}

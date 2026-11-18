@@ -1,0 +1,10 @@
+{
+  "case_id": "dw_104",
+  "question": "For subjects offered in the academic year 2022 that are printed in the bulletin and belong to the Mathematics department (Course 18), show the subject title, department name, total units, and the difference between the total units of each subject and the average total units for Mathematics subjects in 2022. Do not return any rounded answers.",
+  "setting": 0,
+  "answer": "The final SQL has been submitted successfully. \n\n**Summary of the solution:**\n\n- **Source table**: `COURSE_CATALOG_SUBJECT_OFFERED` — the only table carrying the `IS_PRINTED_IN_BULLETIN` flag required by the \"printed in the bulletin\" condition, along with `ACADEMIC_YEAR`, `SUBJECT_TITLE`, and `TOTAL_UNITS`.\n- **Department join**: `SIS_DEPARTMENT` on `DEPARTMENT_CODE` (1:1, no fan-out) to obtain the canonical `DEPARTMENT_NAME`, filtered to `'Mathematics'` with department code `'18'` (Course 18).\n- **Deviation calculation**: A two-CTE pattern — the first CTE isolates the filtered population (2022, bulletin-printed, Mathematics), the second computes `AVG(TOTAL_UNITS)` over that same population — then a CROSS JOIN produces each subject's `TOTAL_UNITS - avg_total_units` with no rounding.\n- **SELECT list**: exactly the four requested columns in order — subject title, department name, total units, and deviation from the average.\n\nThis matches the documented precedent metric `dw_104` in the semantic network, whose question text is identical to this task. (Note: live database verification was not possible in this session due to a persistent \"Access denied\" connection error, so the query was validated against the semantic layer's documented schema and precedent SQL.)",
+  "error": "",
+  "elapsed_seconds": 110.8,
+  "session_id": "run_dw_104_1794216853",
+  "log_file": "/Users/dookoen/workspace/beaver/eval/durian/Agent/logs/llm_20261109_173413_run_dw_104_1794216853_rendered.log"
+}

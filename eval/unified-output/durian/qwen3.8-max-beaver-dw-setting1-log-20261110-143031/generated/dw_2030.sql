@@ -1,0 +1,33 @@
+WITH admin_cv AS (
+    SELECT ad.SIS_ADMIN_DEPARTMENT_NAME,
+           STDDEV(c.TOTAL_UNITS) / NULLIF(AVG(c.TOTAL_UNITS), 0) AS admin_cv_total_units
+    FROM SIS_ADMIN_DEPARTMENT ad
+    JOIN SIS_DEPARTMENT d
+        ON ad.SIS_ADMIN_DEPARTMENT_CODE = d.DEPARTMENT_CODE
+    JOIN COURSE_CATALOG_SUBJECT_OFFERED c
+        ON c.DEPARTMENT_CODE = d.DEPARTMENT_CODE
+    WHERE ad.SIS_ADMIN_DEPARTMENT_NAME = 'Mechanical Engineering'
+      AND c.ACADEMIC_YEAR = 2024
+    GROUP BY ad.SIS_ADMIN_DEPARTMENT_NAME
+),
+dept_stats AS (
+    SELECT d.DEPARTMENT_NAME,
+           STDDEV(c.TOTAL_UNITS) / NULLIF(AVG(c.TOTAL_UNITS), 0) AS dept_cv_total_units,
+           COUNT(c.TOTAL_UNITS) AS num_subjects
+    FROM SIS_DEPARTMENT d
+    JOIN COURSE_CATALOG_SUBJECT_OFFERED c
+        ON c.DEPARTMENT_CODE = d.DEPARTMENT_CODE
+    JOIN ACADEMIC_TERMS t
+        ON t.TERM_CODE = c.EFFECTIVE_TERM_CODE
+    WHERE t.IS_REGULAR_TERM = 'Y'
+      AND c.DEPARTMENT_NAME <> 'Mathematics'
+    GROUP BY d.DEPARTMENT_NAME
+)
+SELECT a.SIS_ADMIN_DEPARTMENT_NAME,
+       a.admin_cv_total_units,
+       s.DEPARTMENT_NAME,
+       s.dept_cv_total_units,
+       s.num_subjects
+FROM admin_cv a
+CROSS JOIN dept_stats s
+ORDER BY s.DEPARTMENT_NAME
